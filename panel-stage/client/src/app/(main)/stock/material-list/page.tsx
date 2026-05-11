@@ -517,7 +517,7 @@ const MalzemeFormDialog = memo(({
                 <TextField fullWidth label="Tedarikçi Kodu" value={localFormData.tedarikciKodu || ''} onChange={(e) => handleLocalChange('tedarikciKodu', e.target.value)} size="small" />
               </Grid>
               <Grid size={{ xs: 12 }}>
-                <TextField fullWidth label="Ölçü / Teknik Özellikler" value={localFormData.olcu || ''} onChange={(e) => handleLocalChange('olcu', e.target.value)} placeholder="Örn: 195/65R15" size="small" />
+                <TextField fullWidth label="Ölçü / Teknik Özellikler" value={localFormData.olcu || ''} onChange={(e) => handleLocalChange('olcu', e.target.value)} size="small" />
               </Grid>
               <Grid size={{ xs: 12, md: 3 }}>
                 <TextField fullWidth label="Ağırlık" type="number" value={localFormData.weight ?? ''} onChange={(e) => handleLocalChange('weight', e.target.value === '' ? undefined : parseFloat(e.target.value))} size="small" />
