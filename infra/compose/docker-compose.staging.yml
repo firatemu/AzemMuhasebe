@@ -1,7 +1,6 @@
-
 services:
   backend-staging:
-    container_name: otomuhasebe_saas_backend
+    container_name: azemmuhasebe_backend
     build:
       context: ../../api-stage/server
       dockerfile: Dockerfile.dev
@@ -14,7 +13,7 @@ services:
       - /app/server/node_modules
     networks: [ app_net ]
     ports:
-      - "3020:3000"
+      - "3040:3000"
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://0.0.0.0:3000/api/health" ]
       interval: 30s
@@ -24,12 +23,12 @@ services:
     restart: unless-stopped
 
   user-panel-staging:
-    container_name: otomuhasebe_saas_panel
+    container_name: azemmuhasebe_panel
     build:
       context: ../../panel-stage/client
       dockerfile: Dockerfile.dev
     ports:
-      - "3010:3000"
+      - "3030:3000"
     env_file:
       - .env.staging
     environment:
@@ -37,8 +36,8 @@ services:
       HOSTNAME: "0.0.0.0"
       PORT: "3000"
       API_PROXY_TARGET: "http://backend-staging:3000"
-      NEXT_PUBLIC_API_URL: http://localhost:3020
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:3020
+      NEXT_PUBLIC_API_URL: http://localhost:3040
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3040
     volumes:
       - ../../panel-stage/client:/app
       - /app/node_modules
@@ -49,39 +48,7 @@ services:
       - backend-staging
     restart: unless-stopped
 
-  b2b-portal:
-    container_name: otomuhasebe_b2b_portal
-    build:
-      context: ../../b2b-portal
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3002:3000"
-    env_file:
-      - .env.staging
-    environment:
-      NODE_ENV: development
-      HOSTNAME: "0.0.0.0"
-      PORT: "3000"
-      NEXT_PUBLIC_API_URL: http://localhost:3020
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:3020
-    volumes:
-      - ../../b2b-portal:/app
-      - /app/node_modules
-      - /app/.next
-    networks:
-      - app_net
-    depends_on:
-      backend-staging:
-        condition: service_healthy
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "wget", "-qO-", "http://0.0.0.0:3000/health" ]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 30s
-
 networks:
   app_net:
-    name: otomuhasebe_saas_net
+    name: azemmuhasebe_net
     external: true

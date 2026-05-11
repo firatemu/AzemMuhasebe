@@ -19,20 +19,20 @@ volumes:
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: azemtarim_postgres
+    container_name: azemmuhasebe_postgres
     restart: unless-stopped
     ports:
-      - "5435:5432"
+      - "5436:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: azemtarim_db
+      POSTGRES_DB: azemmuhasebe_db
       TZ: Europe/Istanbul
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       app_net:
-        aliases: [ azemtarim_postgres ]
+        aliases: [ azemmuhasebe_postgres ]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -41,16 +41,16 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: azemtarim_redis
+    container_name: azemmuhasebe_redis
     restart: unless-stopped
     ports:
-      - "6371:6379"
+      - "6380:6379"
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
     networks:
       app_net:
-        aliases: [ azemtarim_saas_redis ]
+        aliases: [ azemmuhasebe_redis ]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -59,7 +59,7 @@ services:
 
   minio:
     image: minio/minio:latest
-    container_name: azemtarim_minio
+    container_name: azemmuhasebe_minio
     restart: unless-stopped
     command: server /data --console-address ":9001" --address ":9000"
     environment:
@@ -69,11 +69,11 @@ services:
     volumes:
       - minio_data:/data
     ports:
-      - "9200:9000"
-      - "9201:9001"
+      - "9210:9000"
+      - "9211:9001"
     networks:
       app_net:
-        aliases: [ azemtarim_saas_minio ]
+        aliases: [ azemmuhasebe_minio ]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -85,14 +85,14 @@ services:
     build:
       context: ../../api-stage
       dockerfile: server/Dockerfile.staging.prod
+    container_name: azemmuhasebe_backend-staging
     env_file:
       - .env.staging
     environment:
       NODE_ENV: development
-      B2B_ENABLED: "true"
     networks: [ app_net ]
     ports:
-      - "3030:3000"
+      - "3031:3000"
     volumes:
       - backend_uploads:/app/server/uploads
     depends_on:
@@ -111,7 +111,7 @@ services:
     image: node:20-alpine
     working_dir: /app
     ports:
-      - "3020:3000"
+      - "3021:3000"
     env_file:
       - .env.staging
     environment:
@@ -122,7 +122,7 @@ services:
       NEXT_TELEMETRY_DISABLED: "1"
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
-      API_PROXY_TARGET: "http://compose-backend-staging-1:3000"
+      API_PROXY_TARGET: "http://azemmuhasebe_backend-staging-1:3000"
     volumes:
       - ../../panel-stage/client:/app
       - panel_stage_node_modules:/app/node_modules
