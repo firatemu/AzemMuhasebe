@@ -19,6 +19,11 @@ const METHOD_LABELS: Record<string, string> = {
     credit_card: 'Kredi Kartı',
     transfer: 'Havale / EFT',
     other: 'Diğer',
+    // V1 uyumlu: PaymentDialog'dan gelen ek yöntemler
+    cek: 'Çek',
+    senet: 'Senet',
+    hediye_karti: 'Hediye Kartı',
+    kredi_hesabi: 'Cari Kredi',
 };
 
 const fmt = (n: number) =>

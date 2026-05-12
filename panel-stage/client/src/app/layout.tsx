@@ -4,8 +4,8 @@ import { ClientProviders } from './ClientProviders';
 import '@/styles/design-system.css';
 
 export const metadata: Metadata = {
-  title: 'Oto Muhasebe',
-  description: 'Oto Muhasebe - Multi-tenant ERP/SaaS Sistemi',
+  title: 'AzemMuhasebe',
+  description: 'AzemMuhasebe - Multi-tenant ERP/SaaS Sistemi',
   icons: {
     icon: '/favicon.svg',
   },

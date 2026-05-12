@@ -8,6 +8,7 @@ import { CartItemRow } from '../pos/components/CartItemRow';
 import { ItemDiscountModal } from '../pos/components/ItemDiscountModal';
 import { GlobalDiscountBar } from '../pos/components/GlobalDiscountBar';
 import { PaymentModal } from '../pos/components/PaymentModal';
+import PaymentDialog from '../pos/components/PaymentDialog';
 import { ReceiptSlip, ReceiptData } from '../pos/components/ReceiptSlip';
 import Dialog from '@mui/material/Dialog';
 import { SelectorBox } from '../pos/components/SelectorBox';
@@ -102,6 +103,7 @@ export default function PosV2Page() {
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'credit_card' | 'transfer' | 'other' | null>(null);
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
     const [checkoutLoading, setCheckoutLoading] = useState(false);
+    const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
 
     // Barkod buffer
     const bufferRef = useRef('');
@@ -669,6 +671,26 @@ export default function PosV2Page() {
                                 })}
                             </div>
 
+                            {/* Parçalı / Karma Ödeme */}
+                            <button
+                                onClick={() => setPaymentDialogOpen(true)}
+                                style={{
+                                    width: '100%', marginTop: 8, padding: '8px 12px',
+                                    background: 'transparent',
+                                    border: '1.5px dashed var(--border)',
+                                    borderRadius: 12, cursor: 'pointer',
+                                    fontSize: 13, fontWeight: 700, color: 'var(--muted)',
+                                    fontFamily: "'DM Sans', sans-serif",
+                                    transition: 'all .15s',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                                }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--accent)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--accent)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; }}
+                            >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
+                                Parçalı / Karma Ödeme
+                            </button>
+
                             {/* Eklenen ödemeler */}
                             {store.payments.length > 0 && (
                                 <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -754,6 +776,7 @@ export default function PosV2Page() {
                     onClose={() => setPaymentModalOpen(false)}
                     onConfirm={handlePaymentConfirm}
                 />
+                <PaymentDialog />
                 <Dialog
                     open={store.receiptDialogOpen}
                     onClose={() => store.setReceiptDialogOpen(false)}

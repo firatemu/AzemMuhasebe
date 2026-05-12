@@ -7,7 +7,8 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { BankAccountType } from '@prisma/client';
+// BankAccountType enum removed during B2B cleanup - using string for now
+export type BankAccountType = string;
 
 export class CreateBankAccountDto {
   @IsString()

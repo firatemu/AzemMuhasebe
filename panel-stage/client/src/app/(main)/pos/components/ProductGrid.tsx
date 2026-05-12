@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Box, Typography, Tabs, Tab, CircularProgress, Chip, TextField, useTheme, alpha, Divider } from '@mui/material';
 import { usePosStore } from '@/stores/posStore';
 import axios from '@/lib/axios';

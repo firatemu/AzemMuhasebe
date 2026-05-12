@@ -5,7 +5,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app/server
 
 COPY server/package.json server/pnpm-lock.yaml* ./
-RUN corepack enable && pnpm i
+RUN npm install --ignore-scripts --legacy-peer-deps
 
 FROM base AS builder
 WORKDIR /app/server

@@ -24,10 +24,12 @@ import {
   Visibility,
   VisibilityOff,
   ArrowForwardRounded,
-  BusinessCenter,
-  Assessment,
-  Settings,
-  Support,
+  Calculate,
+  Receipt,
+  Inventory,
+  AccountBalance,
+  ShowChart,
+  VerifiedUser,
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
@@ -113,10 +115,16 @@ export default function LoginPage() {
   }
 
   const features = [
-    { icon: <BusinessCenter />, title: 'Fatura Yönetimi', desc: 'E-Fatura ve E-İrsaliye entegrasyonu' },
-    { icon: <Assessment />, title: 'Raporlama', desc: 'Detaylı finansal raporlar ve analizler' },
-    { icon: <Settings />, title: 'Stok Takibi', desc: 'Gerçek zamanlı envanter yönetimi' },
-    { icon: <Support />, title: '7/24 Destek', desc: 'Uzman ekibimizle her zaman yanınızdayız' },
+    { icon: <Calculate />, title: 'Otomatik Hesaplama', desc: 'KDV, stopaj ve mahsup otomatik hesaplanır' },
+    { icon: <Receipt />, title: 'E-Fatura & E-İrsaliye', desc: 'GIB entegrasyonu ile anlık gönderim' },
+    { icon: <Inventory />, title: 'Stok Takibi', desc: 'Lot,批次 ve birim dönüşümü ile tam kontrol' },
+    { icon: <AccountBalance />, title: 'Cari Muhasebe', desc: 'Borç/alacak takibi ve vade yönetimi' },
+  ];
+
+  const stats = [
+    { value: '50K+', label: 'Aktif Firma' },
+    { value: '10M+', label: 'İşlem Hacmi' },
+    { value: '99.9%', label: 'Çalışma Süresi' },
   ];
 
   return (
@@ -127,32 +135,40 @@ export default function LoginPage() {
         bgcolor: '#F8FAFC',
       }}
     >
-      {/* Sol Panel - Kurumsal Banner */}
+      {/* Sol Panel - Yeni Tasarım */}
       <Box
         sx={{
           display: { xs: 'none', lg: 'flex' },
           flex: '0 0 48%',
-          bgcolor: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
           position: 'relative',
           overflow: 'hidden',
+          bgcolor: '#0F172A',
         }}
       >
-        {/* Background Pattern */}
+        {/* Animated Background */}
         <Box
           sx={{
             position: 'absolute',
             inset: 0,
-            opacity: 0.03,
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            background: `
+              radial-gradient(ellipse at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+              linear-gradient(180deg, #0F172A 0%, #1E293B 100%)
+            `,
           }}
         />
 
-        {/* Gradient Overlay */}
+        {/* Grid Pattern */}
         <Box
           sx={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.4) 100%)',
+            opacity: 0.04,
+            backgroundImage: `
+              linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px',
           }}
         />
 
@@ -165,160 +181,194 @@ export default function LoginPage() {
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
           }}
         >
           {/* Logo & Title */}
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-              <Box
-                sx={{
-                  width: 42,
-                  height: 42,
-                  bgcolor: '#3B82F6',
-                  borderRadius: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)',
-                }}
-              >
-                <Typography variant="h6" sx={{ color: '#fff', fontWeight: 700 }}>
-                  Ö
-                </Typography>
-              </Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  color: '#FFFFFF',
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                OtoMuhasebe
+          <Box sx={{ mb: 5 }}>
+            <Box
+              sx={{
+                width: 80,
+                height: 80,
+                mx: 'auto',
+                mb: 3,
+                borderRadius: '20px',
+                background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 20px 40px rgba(59, 130, 246, 0.3)',
+                position: 'relative',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  inset: -4,
+                  borderRadius: '24px',
+                  background: 'linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899)',
+                  opacity: 0.3,
+                  filter: 'blur(8px)',
+                  zIndex: -1,
+                },
+              }}
+            >
+              <Typography variant="h3" sx={{ color: '#fff', fontWeight: 800 }}>
+                Ö
               </Typography>
             </Box>
-
             <Typography
-              variant="h4"
+              variant="h3"
               sx={{
                 color: '#FFFFFF',
-                fontWeight: 700,
-                fontSize: '1.75rem',
-                lineHeight: 1.2,
-                mb: 2,
-                letterSpacing: '-0.02em',
+                fontWeight: 800,
+                fontSize: '2rem',
+                mb: 1.5,
+                letterSpacing: '-0.03em',
               }}
             >
-              Kurumsal
-              <br />
-              <Box component="span" sx={{ color: '#3B82F6' }}>
-                Çözümler
-              </Box>
-              <br />
-              Platformu
+              OtoMuhasebe
             </Typography>
-
             <Typography
-              variant="body2"
+              variant="h5"
               sx={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '0.875rem',
-                lineHeight: 1.6,
-                maxWidth: 320,
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontWeight: 600,
+                fontSize: '1.1rem',
+                letterSpacing: '-0.01em',
               }}
             >
-              Türkiye'nin en kapsamlı ERP çözümü ile işletmenizi dijital geleceğe taşıyın.
+              Akıllı Muhasebe Platformu
             </Typography>
           </Box>
 
-          {/* Feature Cards */}
-          <Box sx={{ mt: 5 }}>
-            <Grid container spacing={2}>
-              {features.map((feature, index) => (
-                <Grid item xs={6} key={index}>
-                  <Box
-                    sx={{
-                      p: 2,
-                      bgcolor: 'rgba(255, 255, 255, 0.05)',
-                      backdropFilter: 'blur(10px)',
-                      borderRadius: 2,
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        bgcolor: 'rgba(255, 255, 255, 0.1)',
-                        transform: 'translateY(-2px)',
-                        borderColor: 'rgba(59, 130, 246, 0.3)',
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 1.5,
-                        bgcolor: 'rgba(59, 130, 246, 0.2)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 1.5,
-                        color: '#3B82F6',
-                      }}
-                    >
-                      {feature.icon}
-                    </Box>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: '#FFFFFF',
-                        fontWeight: 600,
-                        mb: 0.5,
-                        fontSize: '0.8rem',
-                        display: 'block',
-                      }}
-                    >
-                      {feature.title}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: 'rgba(255, 255, 255, 0.5)',
-                        lineHeight: 1.4,
-                        display: 'block',
-                        fontSize: '0.7rem',
-                      }}
-                    >
-                      {feature.desc}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-
-          {/* Bottom Info */}
+          {/* Stats Row */}
           <Box
             sx={{
-              pt: 3,
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              gap: 4,
+              mb: 6,
+              px: 3,
             }}
           >
-            <Typography
-              variant="caption"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.4)',
-                display: 'block',
-                mb: 0.5,
-                fontSize: '0.7rem',
-              }}
-            >
-              Güvenli bağlantı · 256-bit SSL şifreleme
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.7rem' }}
-            >
-              © {new Date().getFullYear()} OtoMuhasebe ERP
+            {stats.map((stat, index) => (
+              <Box key={index} sx={{ textAlign: 'center' }}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: '#3B82F6',
+                    fontWeight: 800,
+                    fontSize: '1.75rem',
+                    lineHeight: 1,
+                    mb: 0.5,
+                  }}
+                >
+                  {stat.value}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '0.75rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {stat.label}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Feature Cards - Vertical Layout */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              width: '100%',
+              maxWidth: 340,
+            }}
+          >
+            {features.map((feature, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                  p: 2,
+                  bgcolor: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: 2,
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 255, 255, 0.08)',
+                    borderColor: 'rgba(59, 130, 246, 0.3)',
+                    transform: 'translateX(4px)',
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 2,
+                    bgcolor: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#3B82F6',
+                    flexShrink: 0,
+                  }}
+                >
+                  {feature.icon}
+                </Box>
+                <Box sx={{ textAlign: 'left' }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      color: '#FFFFFF',
+                      fontWeight: 600,
+                      mb: 0.25,
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    {feature.title}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      fontSize: '0.75rem',
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {feature.desc}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Bottom Badge */}
+          <Box
+            sx={{
+              mt: 5,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              px: 2.5,
+              py: 1,
+              bgcolor: 'rgba(59, 130, 246, 0.1)',
+              borderRadius: '20px',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+            }}
+          >
+            <VerifiedUser sx={{ fontSize: 16, color: '#3B82F6' }} />
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>
+              KVKK Uyumlu · 256-bit SSL · Yedekli Altyapı
             </Typography>
           </Box>
         </Box>
