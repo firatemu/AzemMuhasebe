@@ -6,15 +6,15 @@ version: "3.9"
 
 networks:
   monitoring-network:
-    name: otomuhasebe_monitoring_net
+    name: azemshopping_monitoring_net
     external: true
 
   frontend-network:
-    name: otomuhasebe_frontend_net
+    name: azemshopping_frontend_net
     external: true
 
   backend-network:
-    name: otomuhasebe_backend_net
+    name: azemshopping_backend_net
     external: true
 
 # ── VOLUMES ─────────────────────────────────────────────────────────────────────
@@ -43,7 +43,7 @@ services:
   # Evaluates alert rules (future)
   prometheus:
     image: prom/prometheus:v2.51.0
-    container_name: otomuhasebe_monitoring_prometheus
+    container_name: azemshopping_monitoring_prometheus
     restart: unless-stopped
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -82,7 +82,7 @@ services:
   # Exposed via Caddy (SSL termination)
   grafana:
     image: grafana/grafana:10.4.0
-    container_name: otomuhasebe_monitoring_grafana
+    container_name: azemshopping_monitoring_grafana
     restart: unless-stopped
     env_file:
       - ../../.env.monitoring
@@ -127,7 +127,7 @@ services:
   # Runs in privileged mode to access host metrics
   node-exporter:
     image: prom/node-exporter:v1.7.0
-    container_name: otomuhasebe_monitoring_node_exporter
+    container_name: azemshopping_monitoring_node_exporter
     restart: unless-stopped
     command:
       - '--path.procfs=/host/proc'
@@ -164,7 +164,7 @@ services:
   # IMPORTANT: Connects DIRECTLY to PostgreSQL, NOT via PgBouncer
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
-    container_name: otomuhasebe_monitoring_postgres_exporter
+    container_name: azemshopping_monitoring_postgres_exporter
     restart: unless-stopped
     env_file:
       - ../../.env.monitoring
@@ -202,7 +202,7 @@ services:
   # - Pub/Sub, replication stats
   redis-exporter:
     image: oliver006/redis_exporter:v1.58.0
-    container_name: otomuhasebe_monitoring_redis_exporter
+    container_name: azemshopping_monitoring_redis_exporter
     restart: unless-stopped
     env_file:
       - ../../.env.monitoring

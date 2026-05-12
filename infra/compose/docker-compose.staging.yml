@@ -1,19 +1,19 @@
 services:
   backend-staging:
-    container_name: azemmuhasebe_backend
+    container_name: azemshopping_backend
     build:
       context: ../../api-stage/server
       dockerfile: Dockerfile.dev
     env_file:
-      - .env.staging
+      - .env.azemshopping
     environment:
       - NODE_ENV=development
     volumes:
       - ../../api-stage/server:/app/server
       - /app/server/node_modules
-    networks: [ app_net ]
+    networks: [ azemshopping_net ]
     ports:
-      - "3040:3000"
+      - "4041:3000"
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://0.0.0.0:3000/api/health" ]
       interval: 30s
@@ -23,32 +23,32 @@ services:
     restart: unless-stopped
 
   user-panel-staging:
-    container_name: azemmuhasebe_panel
+    container_name: azemshopping_panel
     build:
       context: ../../panel-stage/client
       dockerfile: Dockerfile.dev
     ports:
-      - "3030:3000"
+      - "4021:3000"
     env_file:
-      - .env.staging
+      - .env.azemshopping
     environment:
       NODE_ENV: development
       HOSTNAME: "0.0.0.0"
       PORT: "3000"
-      API_PROXY_TARGET: "http://backend-staging:3000"
-      NEXT_PUBLIC_API_URL: http://localhost:3040
-      NEXT_PUBLIC_API_BASE_URL: http://localhost:3040
+      API_PROXY_TARGET: "http://azemshopping_backend:3000"
+      NEXT_PUBLIC_API_URL: http://localhost:4041
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4041
     volumes:
       - ../../panel-stage/client:/app
       - /app/node_modules
       - /app/.next
     networks:
-      - app_net
+      - azemshopping_net
     depends_on:
       - backend-staging
     restart: unless-stopped
 
 networks:
-  app_net:
-    name: azemmuhasebe_net
-    external: true
+  azemshopping_net:
+    name: azemshopping_net
+    driver: bridge

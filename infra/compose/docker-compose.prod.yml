@@ -5,18 +5,18 @@ version: "3.9"
 
 networks:
   frontend-network:
-    name: otomuhasebe_frontend_net
+    name: azemshopping_frontend_net
     driver: bridge
     # Public-facing services: caddy, frontend, backend (API access)
 
   backend-network:
-    name: otomuhasebe_backend_net
+    name: azemshopping_backend_net
     driver: bridge
     # Internal services: backend, pgbouncer, postgres, redis, minio
     # NO external access
 
   monitoring-network:
-    name: otomuhasebe_monitoring_net
+    name: azemshopping_monitoring_net
     driver: bridge
     # Reserved for future Prometheus/Grafana/Loki
     # Currently: no services attached
@@ -29,7 +29,7 @@ volumes:
     driver: local
   redis_data:
     driver: local
-  # MinIO uses bind mount: /opt/otomuhasebe/minio:/data (see minio service)
+  # MinIO uses bind mount: /opt/azemshopping/minio:/data (see minio service)
   # named volume removed to persist data even if container is removed
   caddy_data:
     driver: local
@@ -47,12 +47,12 @@ services:
   # ═════════════════════════════════════════════════════════════════
   postgres:
     image: postgres:16-alpine
-    container_name: otomuhasebe_saas_postgres
+    container_name: azemshopping_saas_postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-otomuhasebe_saas_db}
+      POSTGRES_DB: ${POSTGRES_DB:-azemshopping_saas_db}
       TZ: Europe/Istanbul
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -76,7 +76,7 @@ services:
   # ═════════════════════════════════════════════════════════════════
   redis:
     image: redis:7-alpine
-    container_name: otomuhasebe_saas_redis
+    container_name: azemshopping_saas_redis
     restart: unless-stopped
     command: >
       redis-server
@@ -106,7 +106,7 @@ services:
   # ═════════════════════════════════════════════════════════════════
   minio:
     image: minio/minio:latest
-    container_name: otomuhasebe_saas_minio
+    container_name: azemshopping_saas_minio
     restart: unless-stopped
     command: server /data --console-address ":9001" --address ":9000"
     environment:
@@ -116,8 +116,8 @@ services:
       MINIO_REGION: ${MINIO_REGION:-us-east-1}
     volumes:
       # Bind mount to persist data even if container is removed
-      # Run: mkdir -p /opt/otomuhasebe/minio before first start
-      - /opt/otomuhasebe/minio:/data
+      # Run: mkdir -p /opt/azemshopping/minio before first start
+      - /opt/azemshopping/minio:/data
     networks:
       - backend-network
     # NO host port 9000 - internal only!
@@ -143,14 +143,14 @@ services:
   # Architecture: NestJS → PgBouncer → PostgreSQL
   pgbouncer:
     image: edoburu/pgbouncer:latest
-    container_name: otomuhasebe_saas_pgbouncer
+    container_name: azemshopping_saas_pgbouncer
     restart: unless-stopped
     environment:
       - DATABASES_HOST=postgres
       - DATABASES_PORT=5432
       - DATABASES_USER=${POSTGRES_USER:-postgres}
       - DATABASES_PASSWORD=${POSTGRES_PASSWORD}
-      - DATABASES_DBNAME=${POSTGRES_DB:-otomuhasebe_saas_db}
+      - DATABASES_DBNAME=${POSTGRES_DB:-azemshopping_saas_db}
       - POOL_MODE=session
       - MAX_CLIENT_CONN=200
       - DEFAULT_POOL_SIZE=20
@@ -184,7 +184,7 @@ services:
   # ═════════════════════════════════════════════════════════════════
   backend:
     image: ${BACKEND_IMAGE:-compose-backend-staging:latest}
-    container_name: otomuhasebe_saas_backend
+    container_name: azemshopping_saas_backend
     build:
       context: ../../api-stage
       dockerfile: server/Dockerfile.staging.prod
@@ -231,7 +231,7 @@ services:
   # ═══════════════════════════════════════════════════════════════
   frontend:
     image: ${FRONTEND_IMAGE:-compose-user-panel-staging:latest}
-    container_name: otomuhasebe_saas_panel
+    container_name: azemshopping_saas_panel
     build:
       context: ../../panel-stage/client
       dockerfile: Dockerfile.staging.prod
@@ -245,7 +245,7 @@ services:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
       # API proxy to backend (container-to-container)
-      API_PROXY_TARGET: "http://otomuhasebe_saas_backend:3000"
+      API_PROXY_TARGET: "http://azemshopping_saas_backend:3000"
     networks:
       - frontend-network
     healthcheck:
@@ -268,7 +268,7 @@ services:
   # ═══════════════════════════════════════════════════════════════
   caddy:
     image: caddy:2
-    container_name: otomuhasebe_saas_caddy
+    container_name: azemshopping_saas_caddy
     restart: unless-stopped
     ports:
       - "80:80"

@@ -2,7 +2,7 @@
 # Kullanım: cd docker/compose && docker compose -f docker-compose.dev.yml up -d
 # Gereksiz servisler (Caddy, migrate) yok. Panel: NODE_ENV=development, NEXT_PUBLIC_DEVELOPER_MODE=true
 
-name: azemmuhasebe
+name: azemshopping
 
 version: "3.9"
 
@@ -21,20 +21,20 @@ volumes:
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: azemmuhasebe_postgres
+    container_name: azemshopping_postgres
     restart: unless-stopped
     ports:
-      - "5436:5432"
+      - "5437:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: azemmuhasebe_db
+      POSTGRES_DB: azemshopping_db
       TZ: Europe/Istanbul
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       app_net:
-        aliases: [ azemmuhasebe_postgres ]
+        aliases: [ azemshopping_postgres ]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -43,16 +43,16 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: azemmuhasebe_redis
+    container_name: azemshopping_redis
     restart: unless-stopped
     ports:
-      - "6380:6379"
+      - "6381:6379"
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
     networks:
       app_net:
-        aliases: [ azemmuhasebe_redis ]
+        aliases: [ azemshopping_redis ]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -61,7 +61,7 @@ services:
 
   minio:
     image: minio/minio:latest
-    container_name: azemmuhasebe_minio
+    container_name: azemshopping_minio
     restart: unless-stopped
     command: server /data --console-address ":9001" --address ":9000"
     environment:
@@ -71,11 +71,11 @@ services:
     volumes:
       - minio_data:/data
     ports:
-      - "9210:9000"
-      - "9211:9001"
+      - "9212:9000"
+      - "9213:9001"
     networks:
       app_net:
-        aliases: [ azemmuhasebe_minio ]
+        aliases: [ azemshopping_minio ]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -87,14 +87,14 @@ services:
     build:
       context: ../../api-stage
       dockerfile: server/Dockerfile.staging.prod
-    container_name: azemmuhasebe_backend-staging
+    container_name: azemshopping_backend-staging
     env_file:
-      - .env.staging
+      - .env.azemshopping
     environment:
       NODE_ENV: development
     networks: [ app_net ]
     ports:
-      - "3031:3000"
+      - "4031:3000"
     volumes:
       - backend_uploads:/app/server/uploads
     depends_on:
@@ -113,9 +113,9 @@ services:
     image: node:20-alpine
     working_dir: /app
     ports:
-      - "3021:3000"
+      - "4021:3000"
     env_file:
-      - .env.staging
+      - .env.azemshopping
     environment:
       NODE_ENV: development
       NEXT_PUBLIC_DEVELOPER_MODE: "true"
@@ -124,7 +124,7 @@ services:
       NEXT_TELEMETRY_DISABLED: "1"
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
-      API_PROXY_TARGET: "http://azemmuhasebe_backend-staging-1:3000"
+      API_PROXY_TARGET: "http://azemshopping_backend-staging:3000"
     volumes:
       - ../../panel-stage/client:/app
       - panel_stage_node_modules:/app/node_modules

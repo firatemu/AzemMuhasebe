@@ -1,8 +1,8 @@
 
 networks:
   app_net:
-    name: azemtarim_net
-    external: true
+    name: azemshopping_net
+    driver: bridge
 
 volumes:
   redis_data:
@@ -15,7 +15,7 @@ volumes:
 services:
   caddy:
     image: caddy:2
-    container_name: azemtarim_caddy
+    container_name: azemshopping_caddy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -30,23 +30,17 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       - ACME_AGREE=true
-    # healthcheck: DISABLED (geçici - staging container'ları başlatmak için)
-    # test: ["CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:80"]
-    # interval: 30s
-    # timeout: 10s
-    # retries: 3
-    # start_period: 10s
 
   postgres:
     image: postgres:16-alpine
-    container_name: azemtarim_postgres
+    container_name: azemshopping_postgres
     restart: unless-stopped
     ports:
-      - "5435:5432"
+      - "5437:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: IKYYJ1R8fUZ3PItqxf6qel12VNbLYiOe
-      POSTGRES_DB: azemtarim_db
+      POSTGRES_PASSWORD: azemshopping2024
+      POSTGRES_DB: azemshopping_db
       TZ: Europe/Istanbul
     volumes:
       - ../data/postgres:/var/lib/postgresql/data
@@ -60,10 +54,10 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: azemtarim_redis
+    container_name: azemshopping_redis
     restart: unless-stopped
     ports:
-      - "127.0.0.1:6371:6379"
+      - "127.0.0.1:6381:6379"
     command: redis-server --appendonly yes --requirepass ""
     volumes:
       - redis_data:/data
@@ -77,18 +71,18 @@ services:
 
   minio:
     image: minio/minio:latest
-    container_name: azemtarim_minio
+    container_name: azemshopping_minio
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      MINIO_BROWSER: "off"  # Disable public console access
+      MINIO_BROWSER: "off"
     volumes:
-      - /tmp/minio-data:/data  # Host bind mount (persists even if container is removed)
+      - /tmp/minio-data:/data
     ports:
-      - "9200:9000"  # API (Docker network + localhost)
-      - "127.0.0.1:9201:9001"  # Console (localhost only, for admin access)
+      - "9212:9000"
+      - "127.0.0.1:9213:9001"
     networks:
       - app_net
     healthcheck:
