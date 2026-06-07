@@ -1,0 +1,102 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.pnpm-store/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+# production
+build/
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Backups and Secrets
+/var/backups
+*.dump
+*.tar.gz
+*.secret
+
+
+# Backups and temporary folders
+backups/
+dist-staging-images/
+*-backup/
+*_backup/
+panel-prod-backup/
+migration_backup/
+backups_consolidated/
+admin-stage-backup/
+
+# Logs and temp files
+*.log
+*.bak*
+*.txt
+!README*.md
+!*.md
+tsc_output*.txt
+cutover-hardening-report.txt
+docker-health-report.txt
+
+# Environment files
+.env*
+!.env.example
+
+# Uploaded files (firma logosu vb. - Docker volume / bind mount ile kalıcı)
+api-stage/server/uploads/
+secrets/
+
+# Agent Governance
+/tmp/*
+/.agent-work/*
+*.generated.js
+*.generated.sh
+pre-migration-backup.tar.gz
+legacy-archive.tar.gz
+/tmp/
+build.log
+
+# Infrastructure data (PostgreSQL etc)
+infra/data/
+
+# pnpm
+.pnpm-store
+node_modules/.cache
+
+# VS Code / MCP configs (connection strings)
+.vscode/settings.json
+.vscode/mcp.json
+mcp.json
+cline_mcp_settings.json
+.cursor/mcp.json
+!.vscode/extensions.json

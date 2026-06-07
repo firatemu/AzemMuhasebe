@@ -1,0 +1,44 @@
+# ───────────────────────────────────────────────────────────────────────────────────────
+# Grafana Datasource Provisioning
+# Oto Muhasebe SaaS Platform
+# ═══════════════════════════════════════════════════════════════
+# Automatically configures Prometheus as a datasource in Grafana
+# No manual configuration required after startup
+# ───────────────────────────────────────────────────────────────────────────────────────
+
+apiVersion: 1
+
+datasources:
+  # ───────────────────────────────────────────────────────────────────────────
+  # DATASOURCE: Prometheus
+  # ───────────────────────────────────────────────────────────────────────────
+  # Prometheus time-series database for metrics
+  # All dashboards query this datasource
+  # ───────────────────────────────────────────────────────────────────────────
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      # Time range for "Last 5 minutes", "Last 1 hour", etc.
+      timeInterval: 15s
+      # Query timeout in seconds
+      queryTimeout: 60s
+      # Enable caching for dashboard queries
+      cacheDuration: '100ms'
+    secureJsonData: {}
+    version: 1
+
+# ───────────────────────────────────────────────────────────────────────────────────────
+# NOTES
+# ───────────────────────────────────────────────────────────────────────────────────────
+#
+# 1. This file is read by Grafana on startup
+# 2. If datasource is configured manually, it will be overwritten
+# 3. To disable auto-provisioning, move this file out of provisioning directory
+# 4. datasource name "Prometheus" matches dashboard queries
+# 5. url points to Prometheus container via Docker network
+#
+# ───────────────────────────────────────────────────────────────────────────────────────

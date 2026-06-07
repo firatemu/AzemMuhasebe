@@ -1,0 +1,55 @@
+
+services:
+  backend-staging:
+    container_name: muhasebe_saas_backend
+    build:
+      context: ../../api-stage/server
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env.staging
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ../../api-stage/server:/app/server
+      - /app/server/node_modules
+    networks: [ app_net ]
+    ports:
+      - "3020:3000"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://0.0.0.0:3000/api/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+  user-panel-staging:
+    container_name: muhasebe_saas_panel
+    build:
+      context: ../../panel-stage/client
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3010:3000"
+    env_file:
+      - .env.staging
+    environment:
+      NODE_ENV: development
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
+      API_PROXY_TARGET: "http://backend-staging:3000"
+      NEXT_PUBLIC_API_URL: http://localhost:3020
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:3020
+    volumes:
+      - ../../panel-stage/client:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - app_net
+    depends_on:
+      - backend-staging
+    restart: unless-stopped
+
+networks:
+  app_net:
+    name: muhasebe_saas_net
+    external: true

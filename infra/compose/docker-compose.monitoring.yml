@@ -1,0 +1,231 @@
+version: "3.9"
+
+# ── NETWORKS ───────────────────────────────────────────────────────────────────
+# Use existing networks from docker-compose.prod.yml
+# DO NOT create new networks here - reuse existing ones
+
+networks:
+  monitoring-network:
+    name: muhasebe_monitoring_net
+    external: true
+
+  frontend-network:
+    name: muhasebe_frontend_net
+    external: true
+
+  backend-network:
+    name: muhasebe_backend_net
+    external: true
+
+# ── VOLUMES ─────────────────────────────────────────────────────────────────────
+# Persistent storage for monitoring services
+
+volumes:
+  prometheus_data:
+    driver: local
+    # Time-series data storage
+    # Retention: 15 days (configurable via env vars)
+
+  grafana_data:
+    driver: local
+    # Dashboards, users, settings, plugins
+    # Persistent across container restarts
+
+# ── SERVICES ─────────────────────────────────────────────────────────────────────
+# Monitoring stack - separate from production for isolation
+
+services:
+  # ═════════════════════════════════════════════════════════════════
+  # PROMETHEUS - Metrics Collection & Storage
+  # ═════════════════════════════════════════════════════════════════
+  # Scrapes metrics from all exporters
+  # Stores time-series data
+  # Evaluates alert rules (future)
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: muhasebe_monitoring_prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      # Retention: 15 days (can be increased via env vars)
+      - '--storage.tsdb.retention.time=15d'
+    env_file:
+      - ../../.env.monitoring
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring-network
+    # NO host port exposure - internal only!
+    # Grafana accesses Prometheus via monitoring-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  # ═════════════════════════════════════════════════════════════════
+  # GRAFANA - Visualization & Dashboards
+  # ═════════════════════════════════════════════════════════════════
+  # Web UI for metrics visualization
+  # Auto-provisioned dashboards and datasources
+  # Exposed via Caddy (SSL termination)
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: muhasebe_monitoring_grafana
+    restart: unless-stopped
+    env_file:
+      - ../../.env.monitoring
+    environment:
+      # Security settings (can be overridden in .env.monitoring)
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:-admin}
+      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
+      GF_SERVER_DOMAIN: ${GF_SERVER_DOMAIN}
+      GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP:-false}
+      GF_AUTH_ANONYMOUS_ENABLED: ${GF_AUTH_ANONYMOUS_ENABLED:-false}
+      GF_INSTALL_PLUGINS: ${GF_INSTALL_PLUGINS:-}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - monitoring-network
+      - frontend-network
+    # NO host port exposure - accessed via Caddy reverse proxy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  # ═════════════════════════════════════════════════════════════════
+  # NODE EXPORTER - VPS System Metrics
+  # ═════════════════════════════════════════════════════════════════
+  # Exposes hardware and OS metrics:
+  # - CPU, memory, disk, network
+  # - Filesystem stats
+  # - System load
+  # Runs in privileged mode to access host metrics
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: muhasebe_monitoring_node_exporter
+    restart: unless-stopped
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/host/root'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host/root:ro
+    networks:
+      - monitoring-network
+    # NO host port exposure - internal only!
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9100/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  # ═════════════════════════════════════════════════════════════════
+  # POSTGRES EXPORTER - PostgreSQL Database Metrics
+  # ═════════════════════════════════════════════════════════════════
+  # Exposes PostgreSQL metrics:
+  # - Connections, queries, transactions
+  # - Locks, deadlocks
+  # - Cache hit ratio
+  # - Replication lag (if master-slave setup)
+  # IMPORTANT: Connects DIRECTLY to PostgreSQL, NOT via PgBouncer
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: muhasebe_monitoring_postgres_exporter
+    restart: unless-stopped
+    env_file:
+      - ../../.env.monitoring
+    environment:
+      DATA_SOURCE_NAME: ${DATA_SOURCE_NAME}
+      # Additional metrics collectors (optional)
+      PG_EXPORTER_AUTO_DISCOVER_DATABASES: "true"
+      PG_EXPORTER_EXCLUDE_DATABASES: "template0,template1,rdsadmin"
+    networks:
+      - monitoring-network
+      - backend-network
+    # NO host port exposure - internal only!
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9187/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  # ═════════════════════════════════════════════════════════════════
+  # REDIS EXPORTER - Redis Cache Metrics
+  # ═════════════════════════════════════════════════════════════════
+  # Exposes Redis metrics:
+  # - Connected clients, commands/sec
+  # - Memory usage, eviction
+  # - Hit ratio, keyspace hits/misses
+  # - Pub/Sub, replication stats
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.58.0
+    container_name: muhasebe_monitoring_redis_exporter
+    restart: unless-stopped
+    env_file:
+      - ../../.env.monitoring
+    environment:
+      REDIS_ADDR: ${REDIS_ADDR}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      # Additional metrics
+      REDIS_EXPORTER_INCLUDE_SYSTEM_METRICS: "true"
+    networks:
+      - monitoring-network
+      - backend-network
+    # NO host port exposure - internal only!
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9121/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      redis:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"

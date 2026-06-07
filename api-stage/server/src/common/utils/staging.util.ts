@@ -1,0 +1,69 @@
+/**
+ * Staging ortamı yardımcı fonksiyonları
+ * Staging ortamında tenant ID gereksinimini kaldırmak için kullanılır
+ */
+
+/**
+ * Staging ortamında mıyız?
+ */
+export function isStagingEnvironment(): boolean {
+  const isStaging = (
+    process.env.NODE_ENV === 'staging' ||
+    process.env.NODE_ENV === 'development' ||
+    process.env.APP_ENV === 'staging' ||
+    process.env.STAGING_DISABLE_TENANT === 'true' ||
+    !!process.env.STAGING_DEFAULT_TENANT_ID
+  );
+  if (!isStaging) {
+    console.log('[isStagingEnvironment] Returning FALSE. Env:', {
+      NODE_ENV: process.env.NODE_ENV,
+      APP_ENV: process.env.APP_ENV,
+      STAGING_DISABLE: process.env.STAGING_DISABLE_TENANT
+    });
+  }
+  return isStaging;
+}
+
+/**
+ * Tenant ID'yi staging'de opsiyonel yap
+ * Staging'de undefined döndürür, production'da tenantId'yi zorunlu kılar
+ */
+export function getTenantIdForQuery(tenantId: string | undefined): string | undefined {
+  if (isStagingEnvironment()) {
+    // Staging'de tenantId opsiyonel - undefined dönebilir
+    return tenantId;
+  }
+  // Production'da tenantId zorunlu
+  return tenantId;
+}
+
+/**
+ * Database sorgusu için tenantId filtresi oluştur
+ * Staging'de tenantId null/undefined olabilir
+ */
+export function buildTenantWhereClause(tenantId: string | undefined, includeNull = false): any {
+  if (isStagingEnvironment()) {
+    // Staging'de tenantId opsiyonel
+    if (tenantId) {
+      if (includeNull) {
+        return {
+          OR: [
+            { tenantId },
+            { tenantId: null },
+          ],
+        };
+      }
+      return { tenantId };
+    }
+    // TenantId yoksa boş obje döndür (tüm kayıtları getir)
+    return {};
+  }
+
+  // Production'da tenantId zorunlu
+  if (!tenantId) {
+    throw new Error('Tenant ID is required in production environment');
+  }
+  return { tenantId };
+}
+
+

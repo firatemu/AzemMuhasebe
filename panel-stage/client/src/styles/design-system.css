@@ -1,0 +1,178 @@
+/* ============================================
+   DESIGN SYSTEM - OKLCH Tokens
+   Modern, Gradient-Free Design System
+   ============================================ */
+
+/* === COLOR TOKENS === */
+:root {
+  /* Primary Colors */
+  --primary: #1E1B4B;
+  /* Deep Indigo for Primary */
+  --primary-foreground: #FFFFFF;
+  --primary-hover: #312E81;
+  --primary-light: #F1F5F9;
+
+  /* Secondary Colors */
+  --secondary: #64748B;
+  /* Slate 500 */
+  --secondary-foreground: #FFFFFF;
+  --secondary-hover: #475569;
+  --secondary-light: #F8FAFC;
+
+  /* Base Colors - GLOBAL STANDARD */
+  --background: #F8FAFC;
+  /* Cool Gray Background */
+  --foreground: #0F172A;
+  /* Dark Slate Text */
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+
+  /* Muted Colors */
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  /* Slate 500 for metadata */
+  --muted-hover: #E2E8F0;
+
+  /* Accent Colors */
+  --accent: #F1F5F9;
+  --accent-foreground: #0F172A;
+
+  /* Destructive Colors */
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --destructive-hover: #DC2626;
+
+  /* Border & Input - REFINED */
+  --border: #E2E8F0;
+  /* Subtle border */
+  --input: #E2E8F0;
+  --ring: #0F172A;
+
+  /* Chart Colors */
+  --chart-1: #1E1B4B;
+  --chart-2: #3B82F6;
+  --chart-3: #10B981;
+  --chart-4: #475569;
+  --chart-5: #6366F1;
+
+  /* Typography - HIGH-TECH */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-serif: serif;
+
+  /* Spacing - SPATIAL HIERARCHY */
+  --spacing-xs: 0.25rem;
+  /* 4px */
+  --spacing-sm: 0.5rem;
+  /* 8px */
+  --spacing-md: 1rem;
+  /* 16px */
+  --spacing-lg: 1.5rem;
+  /* 24px */
+  --spacing-xl: 2rem;
+  /* 32px - Prioritize this for containers */
+  --spacing-2xl: 3rem;
+  /* 48px */
+
+  /* Border Radius - MODERN */
+  --radius-sm: 0.5rem;
+  /* 8px */
+  --radius-md: 0.75rem;
+  /* 12px */
+  --radius: 1rem;
+  /* 16px - Standard for cards */
+  --radius-lg: 1.25rem;
+  /* 20px */
+  --radius-xl: 1.5rem;
+  /* 24px */
+  --radius-full: 9999px;
+
+  /* Shadows - AMBIENT */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-ambient: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+  /* Modern Soft Shadow */
+  --shadow-none: none;
+
+  /* Global Transition */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --background: #020617;
+  /* Slate 950 */
+  --foreground: #F8FAFC;
+  --card: #0F172A;
+  --card-foreground: #F8FAFC;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  --border: #1E293B;
+  --input: #1E293B;
+  --primary: #F8FAFC;
+  --primary-foreground: #0F172A;
+  --secondary: #334155;
+  --secondary-foreground: #F8FAFC;
+  --shadow-ambient: 0 4px 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* === COMPONENT STYLES === */
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern Card Override */
+.card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-xl);
+  /* Generous spacing */
+  box-shadow: var(--shadow-none);
+  /* Removed shadow preference */
+}
+
+.card:hover {
+  border-color: var(--secondary);
+  box-shadow: var(--shadow-ambient);
+}
+
+/* Actions Visibility on Hover */
+.action-group {
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+tr:hover .action-group,
+.card:hover .action-group,
+.list-item:hover .action-group {
+  opacity: 1;
+}
+
+/* Skeleton Loading - Shimmer */
+.skeleton {
+  background: linear-gradient(90deg,
+      var(--muted) 25%,
+      var(--muted-hover) 37%,
+      var(--muted) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0 50%;
+  }
+}

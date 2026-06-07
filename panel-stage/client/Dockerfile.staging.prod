@@ -1,0 +1,44 @@
+FROM node:20-alpine AS base
+
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app/client
+
+COPY package.json package-lock.json* ./
+RUN npm install --legacy-peer-deps
+
+
+FROM base AS builder
+WORKDIR /app/client
+COPY --from=deps /app/client/node_modules ./node_modules
+COPY . .
+
+# Set build time envs (ARG allows override for stnoto.com: --build-arg NEXT_PUBLIC_API_BASE_URL=https://api.stnoto.com)
+ARG NEXT_PUBLIC_API_BASE_URL=https://staging-api.muhasebe.com
+ARG API_PROXY_TARGET=http://backend-staging:3000
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ENV API_PROXY_TARGET=$API_PROXY_TARGET
+ENV NODE_ENV=production
+
+RUN npx next build
+
+FROM base AS runner
+WORKDIR /app/client
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/client/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/client/.next ./.next
+COPY --from=builder /app/client/node_modules ./node_modules
+COPY --from=builder /app/client/package.json ./package.json
+
+USER nextjs
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

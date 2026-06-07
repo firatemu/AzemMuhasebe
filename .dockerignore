@@ -1,0 +1,18 @@
+# Project-wide Docker Ignore
+**/node_modules
+**/dist
+**/build
+**/.next
+**/out
+**/.git
+**/.cursor
+**/*.log
+
+# Specific large directories to exclude from parent contexts
+api-prod/
+panel-prod/
+panel-stage.backup/
+admin-otomuhasebe/
+backups/
+deployment.log
+*.dump

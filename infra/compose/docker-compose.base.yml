@@ -1,0 +1,92 @@
+networks:
+  app_net:
+    name: muhasebe_net
+    external: true
+
+volumes:
+  muhasebe_redis_data:
+    driver: local
+  muhasebe_caddy_data:
+    driver: local
+  muhasebe_caddy_config:
+    driver: local
+
+services:
+  caddy:
+    image: caddy:2
+    container_name: muhasebe_caddy
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - muhasebe_caddy_data:/data
+      - muhasebe_caddy_config:/config
+    networks:
+      - app_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - ACME_AGREE=true
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: muhasebe_postgres
+    restart: unless-stopped
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: IKYYJ1R8fUZ3PItqxf6qel12VNbLYiOe
+      POSTGRES_DB: muhasebe_db
+      TZ: Europe/Istanbul
+    volumes:
+      - ../data/postgres:/var/lib/postgresql/data
+    networks:
+      - app_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      interval: 30s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: muhasebe_redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6372:6379"
+    command: redis-server --appendonly yes --requirepass ""
+    volumes:
+      - muhasebe_redis_data:/data
+    networks:
+      - app_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: muhasebe_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      MINIO_BROWSER: "off"
+    volumes:
+      - /tmp/muhasebe-minio-data:/data
+    ports:
+      - "9202:9000"
+      - "127.0.0.1:9203:9001"
+    networks:
+      - app_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

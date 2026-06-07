@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/azem/projects/otomuhasebe/logs/.8c8ec980979354fca0e606f30484cfdcf561eb96-audit.json",
+    "files": [
+        {
+            "date": 1774201374905,
+            "name": "/home/azem/projects/otomuhasebe/logs/mcp-puppeteer-2026-03-22.log",
+            "hash": "bba2132ce98a7e219d3b3e28cc6e5f68c5a5deea8ed2d715273ffa21bde2e0c6"
+        }
+    ],
+    "hashType": "sha256"
+}

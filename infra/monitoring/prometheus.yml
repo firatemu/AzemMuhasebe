@@ -1,0 +1,157 @@
+# ───────────────────────────────────────────────────────────────────────────────────────
+# Prometheus Configuration
+# Oto Muhasebe SaaS Platform
+# ═══════════════════════════════════════════════════════════════
+# Scrapes metrics from all exporters and services
+# Stores time-series data for visualization in Grafana
+# ───────────────────────────────────────────────────────────────────────────────────────
+
+global:
+  # How frequently to scrape targets
+  scrape_interval: 15s
+  
+  # How frequently to evaluate alert rules (future)
+  evaluation_interval: 15s
+  
+  # Scrape timeout
+  scrape_timeout: 10s
+  
+  # External labels (useful for federation in multi-server setups)
+  external_labels:
+    monitor: 'muhasebe-monitoring'
+    cluster: 'production'
+
+# Alertmanager configuration (future - not yet implemented)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# Rule files (future - not yet implemented)
+# rule_files:
+#   - "alerts/*.yml"
+
+scrape_configs:
+  # ───────────────────────────────────────────────────────────────────────────
+  # JOB: Node Exporter - VPS System Metrics
+  # ───────────────────────────────────────────────────────────────────────────
+  # Exposes hardware and OS metrics from the VPS:
+  # - CPU usage (per-core, total, user, system, idle)
+  # - Memory usage (total, available, used, cached, buffers)
+  # - Disk usage (per filesystem, I/O, inode counts)
+  # - Network traffic (bytes/packets sent/received per interface)
+  # - System load averages (1min, 5min, 15min)
+  # - Filesystem mount points and stats
+  # - Temperature sensors (if available)
+  # ───────────────────────────────────────────────────────────────────────────
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          instance: 'production-vps'
+          role: 'system'
+          cluster: 'production'
+    # Scrape every 15 seconds (can be reduced to 5s for granular data)
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # JOB: PostgreSQL Exporter - Database Metrics
+  # ───────────────────────────────────────────────────────────────────────────
+  # Exposes PostgreSQL performance metrics:
+  # - Connection stats (total, active, idle, max connections)
+  # - Query performance (slow queries, query time distribution)
+  # - Transaction stats (commits, rollbacks, deadlocks)
+  # - Lock stats (table locks, row locks, lock waits)
+  # - Cache stats (buffer pool hit ratio, cache effectiveness)
+  # - Replication lag (if master-slave or streaming replication)
+  # - Database size growth and bloat
+  # - WAL (Write-Ahead Log) stats
+  # ───────────────────────────────────────────────────────────────────────────
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          instance: 'production-postgres'
+          role: 'database'
+          cluster: 'production'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    # Metrics path is /metrics by default
+    metrics_path: /metrics
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # JOB: Redis Exporter - Cache Metrics
+  # ───────────────────────────────────────────────────────────────────────────
+  # Exposes Redis performance metrics:
+  # - Connected clients (total, blocked, in Pub/Sub)
+  # - Commands per second (total, per command type)
+  # - Memory usage (used, RSS, peak, fragmentation ratio)
+  # - Key eviction stats (evicted keys, maxmemory policy)
+  # - Cache hit ratio (hits, misses, hit percentage)
+  # - Keyspace stats (keys per DB, expires)
+  # - Replication stats (if master-slave or cluster)
+  # - Persistence stats (RDB saves, AOF rewrites)
+  # - Pub/Sub stats (channels, patterns, subscribers)
+  # ───────────────────────────────────────────────────────────────────────────
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          instance: 'production-redis'
+          role: 'cache'
+          cluster: 'production'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # JOB: Backend - NestJS Application Metrics (OPTIONAL)
+  # ───────────────────────────────────────────────────────────────────────────
+  # ⚠️ REQUIRES: @willsoto/nestjs-prometheus package installed
+  # If NOT implemented, COMMENT OUT this job!
+  #
+  # Exposes NestJS application metrics:
+  # - HTTP request metrics (status codes, duration, rate)
+  # - Controller method calls
+  # - Custom business metrics (if instrumented)
+  # - Process metrics (CPU, memory, event loop lag)
+  # - WebSocket connections (if applicable)
+  # ───────────────────────────────────────────────────────────────────────────
+  - job_name: 'backend'
+    static_configs:
+      - targets: ['backend:3020']
+        labels:
+          instance: 'production-backend'
+          role: 'application'
+          cluster: 'production'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    # Custom metrics endpoint exposed by NestJS
+    metrics_path: /metrics
+    # OPTIONAL: Add basic auth if metrics endpoint is protected
+    # basic_auth:
+    #   username: ${PROMETHEUS_METRICS_USER}
+    #   password: ${PROMETHEUS_METRICS_PASSWORD}
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # JOB: Prometheus Self-Monitoring
+  # ───────────────────────────────────────────────────────────────────────────
+  # Exposes Prometheus's own metrics:
+  # - Scrape stats (targets up/down, scrape duration)
+  # - Storage stats (samples ingested, storage size)
+  # - Query stats (queries per second, query latency)
+  # - Rule evaluation stats (alerts fired, eval duration)
+  # - HTTP server stats (requests, response codes)
+  # ───────────────────────────────────────────────────────────────────────────
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: 'production-prometheus'
+          role: 'monitoring'
+          cluster: 'production'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: /metrics

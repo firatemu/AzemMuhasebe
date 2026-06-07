@@ -1,0 +1,316 @@
+export const menuItems = [
+  // ========================================================================
+  // GENEL
+  // ========================================================================
+  { id: 'menu', label: 'Menü', icon: 'Menu', path: '/menu', color: '#0ea5e9', bgColor: '#f0f9ff' },
+  { id: 'dashboard', label: 'Dashboard', icon: 'Dashboard', path: '/dashboard', color: '#667eea', bgColor: '#f0f4ff' },
+
+  // ========================================================================
+  // STOK YÖNETİMİ
+  // ========================================================================
+  {
+    id: 'stock',
+    label: 'Stok Yönetimi',
+    icon: 'Inventory',
+    color: '#06b6d4',
+    bgColor: '#ecfeff',
+    subItems: [
+      { id: 'stock-material-list', label: 'Malzeme Listesi', icon: 'Inventory', path: '/stock/material-list', color: '#06b6d4' },
+      { id: 'stock-price-cards', label: 'Fiyat Kartları', icon: 'LocalOffer', path: '/stock/price-cards', color: '#8b5cf6' },
+      { id: 'stock-price-lists', label: 'Fiyat Listeleri', icon: 'ListAlt', path: '/stock/price-lists', color: '#8b5cf6' },
+      { id: 'stock-material-movements', label: 'Malzeme Hareketleri', icon: 'Assessment', path: '/stock/material-movements', color: '#06b6d4' },
+      { id: 'stock-category-management', label: 'Kategori Yönetimi', icon: 'Assessment', path: '/stock/category-management', color: '#06b6d4' },
+      { id: 'stock-brand-management', label: 'Marka Yönetimi', icon: 'DirectionsCar', path: '/stock/brand-management', color: '#06b6d4' },
+      { id: 'stock-unit-sets', label: 'Birim Setleri Yönetimi', icon: 'Settings', path: '/stock/unit-sets', color: '#06b6d4' },
+      { id: 'stock-sales-prices', label: 'Satış Fiyatları', icon: 'AttachMoney', path: '/stock/sales-prices', color: '#ef4444' },
+      { id: 'stock-purchase-prices', label: 'Satın Alma Fiyatları', icon: 'AttachMoney', path: '/stock/purchase-prices', color: '#0ea5e9' },
+      { id: 'stock-bulk-sales-price-update', label: 'Toplu Satış Fiyat Güncelleme', icon: 'AttachMoney', path: '/stock/bulk-sales-price-update', color: '#22c55e' },
+      { id: 'stock-costing', label: 'Maliyetlendirme', icon: 'AttachMoney', path: '/stock/costing', color: '#9333ea' },
+      { id: 'stock-critical-stock-management', label: 'Kritik Stok Yönetimi', icon: 'Warning', path: '/stock/critical-stock-management', color: '#ef4444' },
+      { id: 'stock-barcodes', label: 'Ürün Barkodları', icon: 'Inventory', path: '/stock/barcodes', color: '#06b6d4' },
+    ],
+  },
+
+  // ========================================================================
+  // CARİ YÖNETİMİ
+  // ========================================================================
+  {
+    id: 'accounts',
+    label: 'Cari Yönetimi',
+    icon: 'People',
+    color: '#334155',
+    bgColor: '#f8fafc',
+    subItems: [
+      { id: 'accounts-list', label: 'Cari Listesi', icon: 'People', path: '/accounts', color: '#8b5cf6' },
+      { id: 'accounts-invoice-closing', label: 'Fatura Kapatma & Ekstre', icon: 'AccountBalance', path: '/accounts/invoice-closing', color: '#0891b2' },
+      { id: 'accounts-reports-debit-credit', label: 'Borç Alacak Durumu', icon: 'Assessment', path: '/accounts/reports/borc-alacak', color: '#10b981' },
+      { id: 'accounts-maturity-analysis', label: 'Vade Analizi', icon: 'CalendarMonth', path: '/maturity-analysis', color: '#667eea' },
+    ],
+  },
+
+  // ========================================================================
+  // SATIŞ YÖNETİMİ
+  // ========================================================================
+  {
+    id: 'sales-management',
+    label: 'Satış Yönetimi',
+    icon: 'PointOfSale',
+    color: '#8b5cf6',
+    bgColor: '#f5f3ff',
+    subItems: [
+      {
+        id: 'invoice',
+        label: 'Faturalar',
+        icon: 'Receipt',
+        color: '#1e293b',
+        subItems: [
+          { id: 'invoice-sales', label: 'Satış Faturaları', icon: 'PointOfSale', path: '/invoice/sales', color: '#8b5cf6' },
+          { id: 'invoice-purchase', label: 'Satın Alma Faturaları', icon: 'ShoppingCart', path: '/invoice/purchase', color: '#f59e0b' },
+          { id: 'invoice-return-sales', label: 'Satış İade Faturaları', icon: 'TrendingDown', path: '/invoice/return/sales', color: '#ef4444' },
+          { id: 'invoice-return-purchase', label: 'Satınalma İade Faturaları', icon: 'TrendingUp', path: '/invoice/return/purchase', color: '#06b6d4' },
+          { id: 'invoice-profitability', label: 'Fatura Karlılığı', icon: 'TrendingUp', path: '/invoice/profitability', color: '#10b981' },
+          { id: 'invoice-archive', label: 'Fatura Arşivi', icon: 'Assessment', path: '/invoice/archive', color: '#ef4444' },
+          { id: 'invoice-incoming-e-invoice', label: 'Gelen E-Faturalar', icon: 'CloudDownload', path: '/e-invoice/incoming', color: '#0ea5e9' },
+        ],
+      },
+      {
+        id: 'delivery-notes',
+        label: 'İrsaliyeler',
+        icon: 'LocalShipping',
+        color: '#334155',
+        subItems: [
+          { id: 'sales-delivery-note-list', label: 'Satış İrsaliyesi', icon: 'ReceiptLong', path: '/sales-delivery-note', color: '#8b5cf6' },
+          { id: 'purchase-delivery-note-list', label: 'Satın Alma İrsaliyesi', icon: 'ReceiptLong', path: '/purchase-delivery-note', color: '#06b6d4' },
+        ],
+      },
+      {
+        id: 'orders',
+        label: 'Siparişler',
+        icon: 'ShoppingCart',
+        color: '#0891b2',
+        subItems: [
+          { id: 'orders-sales', label: 'Satış Siparişleri', icon: 'PointOfSale', path: '/orders/sales', color: '#0891b2' },
+          { id: 'orders-purchase', label: 'Satın Alma Siparişleri', icon: 'ShoppingCart', path: '/purchase-orders', color: '#06b6d4' },
+        ],
+      },
+      {
+        id: 'quotes',
+        label: 'Teklif',
+        icon: 'Description',
+        color: '#f59e0b',
+        subItems: [
+          { id: 'quotes-sales', label: 'Satış Teklifleri', icon: 'PointOfSale', path: '/quotes/sales', color: '#f59e0b' },
+          { id: 'quotes-purchase', label: 'Satın Alma Teklifleri', icon: 'ShoppingCart', path: '/quotes/purchase', color: '#10b981' },
+        ],
+      },
+    ],
+  },
+
+  // ========================================================================
+  // FİNANS
+  // ========================================================================
+  {
+    id: 'finance',
+    label: 'Finans',
+    icon: 'AccountBalanceWallet',
+    color: '#059669',
+    bgColor: '#ecfdf5',
+    subItems: [
+      { id: 'collection', label: 'Tahsilat & Ödeme', icon: 'Payment', path: '/collection', color: '#10b981' },
+      {
+        id: 'bank',
+        label: 'Banka İşlemleri',
+        icon: 'AccountBalanceWallet',
+        color: '#2563eb',
+        subItems: [
+          { id: 'bank-accounts', label: 'Banka ve Hesapları', icon: 'AccountBalance', path: '/bank', color: '#2563eb' },
+          { id: 'bank-credit-operations', label: 'Kredi İşlemleri', icon: 'CreditCard', path: '/bank/credit-operations', color: '#9333ea' },
+          { id: 'company-credit-cards', label: 'Firma Kredi Kartları', icon: 'CreditCard', path: '/bank/credit-cards', color: '#7c3aed' },
+          { id: 'bank-transfer-incoming', label: 'Gelen Havale', icon: 'TrendingUp', path: '/bank-transfer/gelen', color: '#10b981' },
+          { id: 'bank-transfer-outgoing', label: 'Giden Havale', icon: 'TrendingDown', path: '/bank-transfer/giden', color: '#ef4444' },
+          { id: 'bank-transfer-deleted', label: 'Silinen Kayıtlar', icon: 'Delete', path: '/bank-transfer/silinen', color: '#6b7280' },
+        ],
+      },
+      {
+        id: 'checks-promissory-notes',
+        label: 'Çek & Senet',
+        icon: 'Payment',
+        color: '#8b5cf6',
+        subItems: [
+          { id: 'checks-promissory-notes-list', label: 'Çek/Senet Listesi', icon: 'Payment', path: '/checks', color: '#8b5cf6' },
+          { id: 'checks-new', label: 'Yeni evrak', icon: 'Add', path: '/checks/new', color: '#a78bfa' },
+          { id: 'checks-reports', label: 'Çek/Senet Raporları', icon: 'Assessment', path: '/checks/reports', color: '#7c3aed' },
+          { id: 'payroll-bordro', label: 'Bordro (çek/senet)', icon: 'Description', path: '/payroll', color: '#6366f1' },
+        ],
+      },
+      { id: 'payments', label: 'Ödemeler', icon: 'SwapHoriz', path: '/payments', color: '#14b8a6' },
+      { id: 'cash', label: 'Kasa', icon: 'AccountBalance', path: '/cash', color: '#f59e0b' },
+    ],
+  },
+
+  // ========================================================================
+  // İNSAN KAYNAKLARI
+  // ========================================================================
+  {
+    id: 'hr',
+    label: 'İnsan Kaynakları',
+    icon: 'Badge',
+    color: '#d946ef',
+    bgColor: '#fdf4ff',
+    subItems: [
+      { id: 'hr-personnel', label: 'Personel Listesi', icon: 'People', path: '/hr/personel', color: '#d946ef' },
+      { id: 'hr-salary', label: 'Maaş Yönetimi', icon: 'AttachMoney', path: '/hr/salary-management', color: '#d946ef' },
+      { id: 'hr-advances', label: 'Avans Yönetimi', icon: 'Payment', path: '/hr/advances', color: '#d946ef' },
+    ],
+  },
+
+  // ========================================================================
+  // ŞİRKET ARAÇLARI
+  // ========================================================================
+  {
+    id: 'company-vehicles',
+    label: 'Şirket Araçları',
+    icon: 'DirectionsCar',
+    color: '#10b981',
+    bgColor: '#ecfdf5',
+    subItems: [
+      { id: 'company-vehicles-list', label: 'Araç Listesi', icon: 'DirectionsCar', path: '/company-vehicles', color: '#10b981' },
+      { id: 'company-vehicles-expenses', label: 'Araç Masrafları', icon: 'LocalGasStation', path: '/vehicles/expenses', color: '#10b981' },
+    ],
+  },
+
+  // ========================================================================
+  // MASRAF YÖNETİMİ
+  // ========================================================================
+  {
+    id: 'expense',
+    label: 'Masraf Yönetimi',
+    icon: 'AttachMoney',
+    color: '#ef4444',
+    bgColor: '#fef2f2',
+    path: '/expense',
+  },
+
+  // ========================================================================
+  // DEPO & RAF YÖNETİMİ
+  // ========================================================================
+  {
+    id: 'warehouse',
+    label: 'Depo & Raf Yönetimi',
+    icon: 'Warehouse',
+    color: '#3b82f6',
+    bgColor: '#eff6ff',
+    subItems: [
+      { id: 'warehouse-warehouses', label: 'Depo Yönetimi', icon: 'Warehouse', path: '/warehouse/warehouses', color: '#6366f1' },
+      { id: 'warehouse-transfer-note', label: 'Ambar Transfer Fişi', icon: 'LocalShipping', path: '/warehouse/transfer-note', color: '#f59e0b' },
+      { id: 'warehouse-transfer', label: 'Transfer İşlemi', icon: 'TrendingDown', path: '/warehouse/operations/transfer', color: '#f59e0b' },
+      { id: 'warehouse-inventory-count', label: 'Stok Sayım', icon: 'Inventory', path: '/inventory-count', color: '#14b8a6' },
+      { id: 'warehouse-stock-report', label: 'Ambar Stok Raporu', icon: 'Assessment', path: '/warehouse/stock-report', color: '#14b8a6' },
+      { id: 'warehouse-reports', label: 'Depo Raporları', icon: 'Assessment', path: '/warehouse/reports', color: '#14b8a6' },
+      { id: 'warehouse-locations', label: 'Lokasyon / Raf Yönetimi', icon: 'Warehouse', path: '/warehouse/locations', color: '#3b82f6' },
+    ],
+  },
+
+  // ========================================================================
+  // POS SİSTEMİ
+  // ========================================================================
+  {
+    id: 'pos-menu',
+    label: 'POS Sistemi',
+    icon: 'PointOfSale',
+    color: '#10b981',
+    bgColor: '#ecfdf5',
+    subItems: [
+      { id: 'pos', label: 'POS Satış (V1)', icon: 'PointOfSale', path: '/pos', color: '#10b981' },
+      { id: 'pos-v2', label: 'POS Satış V2', icon: 'FlashOn', path: '/pos-v2', color: '#6366f1' },
+    ],
+  },
+
+  // ========================================================================
+  // RAPORLAMA
+  // ========================================================================
+  {
+    id: 'reporting',
+    label: 'Raporlama',
+    icon: 'Assessment',
+    color: '#14b8a6',
+    bgColor: '#f0fdfa',
+    subItems: [
+      { id: 'reporting-general', label: 'Genel Özet', icon: 'Assessment', path: '/reporting', color: '#14b8a6' },
+      { id: 'reporting-portfolio', label: 'Portföy Raporu (çek/senet)', icon: 'Assessment', path: '/reports/portfolio', color: '#8b5cf6' },
+      { id: 'reporting-sales-staff', label: 'Satış Elemanı Performansı', icon: 'People', path: '/reporting/satis-elemani', color: '#8b5cf6' },
+      { id: 'reporting-accounts-risk', label: 'Cari Risk Limitleri', icon: 'Assessment', path: '/reporting/cari-risk-limitleri', color: '#f59e0b' },
+      { id: 'analytics', label: 'Analitikler', icon: 'Assessment', path: '/analytics', color: '#0ea5e9' },
+    ],
+  },
+
+  // ========================================================================
+  // YÖNETİM
+  // ========================================================================
+  {
+    id: 'management',
+    label: 'Yönetim',
+    icon: 'Tv',
+    color: '#6366f1',
+    bgColor: '#eef2ff',
+    subItems: [
+      { id: 'ceo-dashboard', label: 'CEO Dashboard (Faz 3)', icon: 'Tv', path: '/management/dashboard', color: '#6366f1' },
+    ],
+  },
+
+  // ========================================================================
+  // AYARLAR
+  // ========================================================================
+  {
+    id: 'settings',
+    label: 'Ayarlar',
+    icon: 'Settings',
+    color: '#6b7280',
+    bgColor: '#f9fafb',
+    subItems: [
+      { id: 'settings-check-bill', label: 'Çek/Senet Ayarları', icon: 'Settings', path: '/settings/parameters#cek-senet', color: '#8b5cf6' },
+      { id: 'settings-quick-menu', label: 'Hızlı Menü', icon: 'FlashOn', path: '/settings/quick-menu', color: '#f59e0b' },
+      { id: 'settings-sales-staff', label: 'Satış Elemanları', icon: 'People', path: '/settings/sales-staff', color: '#8b5cf6' },
+      { id: 'settings-number-templates', label: 'Numara Şablonları', icon: 'Settings', path: '/settings/number-templates', color: '#6b7280' },
+      { id: 'settings-parameters', label: 'Parametreler', icon: 'Settings', path: '/settings/parameters', color: '#6b7280' },
+      { id: 'admin-logs', label: 'Sistem İzleme (Loglar)', icon: 'AdminPanelSettings', path: '/settings/logs', color: '#ef4444' },
+      { id: 'settings-company', label: 'Firma Ayarları', icon: 'Settings', path: '/settings/company-settings', color: '#6b7280' },
+      { id: 'settings-localization', label: 'Dil ve Bölge', icon: 'Settings', path: '/settings/localization', color: '#6b7280' },
+      { id: 'settings-licenses', label: 'Lisans Yönetimi', icon: 'AdminPanelSettings', path: '/settings/licenses', color: '#8b5cf6' },
+      { id: 'settings-plans', label: 'Abone Planları', icon: 'FlashOn', path: '/settings/plans', color: '#3b82f6' },
+      { id: 'subscriptions', label: 'Abonelik Yönetimi', icon: 'Payment', path: '/subscriptions', color: '#10b981' },
+    ],
+  },
+
+  // ========================================================================
+  // YETKİLENDİRME
+  // ========================================================================
+  {
+    id: 'authorization',
+    label: 'Yetkilendirme',
+    icon: 'AdminPanelSettings',
+    color: '#ec4899',
+    bgColor: '#fdf2f8',
+    subItems: [
+      { id: 'authorization-users', label: 'Kullanıcılar', icon: 'People', path: '/authorization', color: '#ec4899' },
+      { id: 'authorization-roles', label: 'Roller & İzinler', icon: 'AdminPanelSettings', path: '/authorization/roller', color: '#ec4899' },
+    ],
+  },
+
+  // ========================================================================
+  // VERİ AKTARIMI
+  // ========================================================================
+  {
+    id: 'data-import',
+    label: 'Veri Aktarımı',
+    icon: 'CloudUpload',
+    color: '#334155',
+    bgColor: '#f8fafc',
+    subItems: [
+      { id: 'data-import-accounts', label: 'Cari Hesap Aktarımı', icon: 'People', path: '/data-import/cari-hesap-aktarim', color: '#8b5cf6' },
+      { id: 'data-import-material', label: 'Malzeme Aktarımı', icon: 'Inventory', path: '/data-import/malzeme-aktarim', color: '#06b6d4' },
+      { id: 'data-import-sales-price', label: 'Satış Fiyat Aktarımı', icon: 'AttachMoney', path: '/data-import/satis-fiyat-aktarim', color: '#ef4444' },
+      { id: 'data-import-purchase-price', label: 'Satın Alma Fiyat Aktarımı', icon: 'AttachMoney', path: '/data-import/satin-alma-fiyat-aktarim', color: '#0ea5e9' },
+    ],
+  },
+];

@@ -1,0 +1,7 @@
+**/node_modules
+**/dist
+.git
+.env
+*.log
+api-stage/server/node_modules
+api-stage/server/dist

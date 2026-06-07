@@ -1,0 +1,23 @@
+FROM node:20-alpine
+WORKDIR /app/server
+
+# pnpm kur (Eğer pnpm kullanılıyorsa, aksi halde npm kullanılır)
+RUN npm install -g pnpm@10
+
+# Bağımlılıkları kopyala ve kur
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install
+
+# Kaynak kodu kopyala (Volume mount edileceği için bu build aşaması için gerekli)
+COPY . .
+
+# Prisma generate (DB tipleri için)
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" npx prisma generate
+
+ENV NODE_ENV=development
+ENV PORT=3000
+
+EXPOSE 3000
+
+# Watch modunda başlat
+CMD ["pnpm", "dev"]

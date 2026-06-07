@@ -1,0 +1,117 @@
+name: Build & Push to GHCR
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  validate:
+    name: Validate (Final Safety Check)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm 10
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Backend - Install & Lint & TypeCheck
+        working-directory: api-stage/server
+        run: |
+          npm ci
+          npm run lint
+          npx tsc --noEmit
+
+      - name: Frontend - Install & Lint & TypeCheck
+        working-directory: panel-stage/client
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm lint
+          pnpm tsc --noEmit
+
+  build-backend:
+    name: Build & Push Backend
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api-stage/server
+          file: ./api-stage/server/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/firatemu/otomuhasebe-api:latest
+            ghcr.io/firatemu/otomuhasebe-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-frontend:
+    name: Build & Push Frontend
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./panel-stage/client
+          file: ./panel-stage/client/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/firatemu/otomuhasebe-panel:latest
+            ghcr.io/firatemu/otomuhasebe-panel:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  notify:
+    name: Summary Notification
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Summary
+        run: |
+          echo "🚀 Build & Push completed successfully!"
+          echo "Commit: ${{ github.sha }}"
+          echo "Message: ${{ github.event.head_commit.message }}"
+          echo "Images pushed to GHCR:"
+          echo " - ghcr.io/firatemu/otomuhasebe-api:latest"
+          echo " - ghcr.io/firatemu/otomuhasebe-api:${{ github.sha }}"
+          echo " - ghcr.io/firatemu/otomuhasebe-panel:latest"
+          echo " - ghcr.io/firatemu/otomuhasebe-panel:${{ github.sha }}"

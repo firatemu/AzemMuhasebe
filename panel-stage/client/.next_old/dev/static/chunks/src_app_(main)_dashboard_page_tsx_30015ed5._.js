@@ -1,0 +1,30 @@
+(globalThis.TURBOPACK_CHUNK_LISTS || (globalThis.TURBOPACK_CHUNK_LISTS = [])).push({
+    script: typeof document === "object" ? document.currentScript : undefined,
+    chunks: [
+  "static/chunks/src_components_86a1231f._.js",
+  "static/chunks/3e759_@mui_material_esm_35a604b1._.js",
+  "static/chunks/6f9c7_recharts_es6_util_8be06e01._.js",
+  "static/chunks/6f9c7_recharts_es6_component_82ea1235._.js",
+  "static/chunks/6f9c7_recharts_es6_state_39359262._.js",
+  "static/chunks/6f9c7_recharts_es6_cartesian_2b437326._.js",
+  "static/chunks/6f9c7_recharts_es6_00d94d27._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_hooks_features_rows_00274262._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_hooks_features_rowSelection_4c67844d._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_hooks_features_editing_697339c3._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_hooks_features_8cfd6cfd._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_hooks_core_d86bce03._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_hooks_utils_913b497c._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_components_containers_91b2c906._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_components_panel_754abbca._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_components_cell_bb048137._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_components_columnHeaders_87bf2d9e._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_components_2a0ed30b._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_DataGrid_0be3260a._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_material_b4ac719d._.js",
+  "static/chunks/e1095_@mui_x-data-grid_esm_81c1f053._.js",
+  "static/chunks/d5eb6_@mui_x-virtualizer_esm_bbbbb846._.js",
+  "static/chunks/6b3a3_@popperjs_core_lib_5dcad8e4._.js",
+  "static/chunks/node_modules__pnpm_1a41f821._.js"
+],
+    source: "dynamic"
+});

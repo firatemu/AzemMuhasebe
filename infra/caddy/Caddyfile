@@ -1,0 +1,149 @@
+# Muhasebe — yerel HTTPS reverse proxy (sadece muhasebe_net)
+# Panel: https://muhasebe.localhost
+# API:   https://api.muhasebe.localhost  veya  https://muhasebe.localhost/api/*
+
+{
+  admin off
+}
+
+(common_security) {
+  header {
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+  encode gzip zstd
+}
+
+(muhasebe_routes) {
+  # Auth cookies - Next.js API route (panel)
+  handle /api/auth/cookies {
+    reverse_proxy muhasebe_panel:3000
+  }
+  handle /api/* {
+    reverse_proxy muhasebe_backend:3000
+  }
+  handle /swagger/* {
+    reverse_proxy muhasebe_backend:3000
+  }
+  handle {
+    reverse_proxy muhasebe_panel:3000
+  }
+}
+
+(shopping_routes) {
+  handle /api/* {
+    reverse_proxy textilepos-api:4000
+  }
+  handle {
+    reverse_proxy textilepos-web:3000
+  }
+}
+
+https://muhasebe.localhost {
+  tls internal
+  import common_security
+  import muhasebe_routes
+}
+
+https://api.muhasebe.localhost {
+  tls internal
+  import common_security
+  reverse_proxy muhasebe_backend:3000
+}
+
+http://muhasebe.localhost {
+  redir https://{host}{uri} permanent
+}
+
+http://api.muhasebe.localhost {
+  redir https://{host}{uri} permanent
+}
+
+https://shopping.localhost {
+  tls internal
+  import common_security
+  import shopping_routes
+}
+
+http://shopping.localhost {
+  redir https://{host}{uri} permanent
+}
+
+(crm_routes) {
+  handle /api/* {
+    reverse_proxy crm_app:3000
+  }
+  handle {
+    reverse_proxy crm_app:3000
+  }
+}
+
+https://crm.localhost {
+  tls internal
+  import common_security
+  import crm_routes
+}
+
+https://admin.crm.localhost {
+  tls internal
+  import common_security
+  import crm_routes
+}
+
+https://app.crm.localhost {
+  tls internal
+  import common_security
+  redir https://crm.localhost{uri} permanent
+}
+
+http://crm.localhost {
+  redir https://{host}{uri} permanent
+}
+
+http://admin.crm.localhost {
+  redir https://{host}{uri} permanent
+}
+
+http://app.crm.localhost {
+  redir https://{host}{uri} permanent
+}
+
+(crm_staging_routes) {
+  handle /api/* {
+    reverse_proxy crm_app_staging:3000
+  }
+  handle {
+    reverse_proxy crm_app_staging:3000
+  }
+}
+
+https://crm-staging.localhost {
+  tls internal
+  import common_security
+  import crm_staging_routes
+}
+
+https://admin.crm-staging.localhost {
+  tls internal
+  import common_security
+  import crm_staging_routes
+}
+
+https://app.crm-staging.localhost {
+  tls internal
+  import common_security
+  redir https://crm-staging.localhost{uri} permanent
+}
+
+http://crm-staging.localhost {
+  redir https://{host}{uri} permanent
+}
+
+http://admin.crm-staging.localhost {
+  redir https://{host}{uri} permanent
+}
+
+http://app.crm-staging.localhost {
+  redir https://{host}{uri} permanent
+}

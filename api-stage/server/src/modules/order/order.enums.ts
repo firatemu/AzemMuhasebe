@@ -1,0 +1,15 @@
+export enum OrderType {
+    SALE = 'SALE',
+    PURCHASE = 'PURCHASE'
+}
+
+export enum SalesOrderStatus {
+    PENDING = 'PENDING',
+    PREPARING = 'PREPARING',
+    PREPARED = 'PREPARED',
+    SHIPPED = 'SHIPPED',
+    COMPLETED = 'COMPLETED',
+    PARTIALLY_SHIPPED = 'PARTIALLY_SHIPPED',
+    INVOICED = 'INVOICED',
+    CANCELLED = 'CANCELLED'
+}

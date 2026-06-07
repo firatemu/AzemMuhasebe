@@ -1,0 +1,104 @@
+{
+  "name": "muhasebe-cursor-rules",
+  "version": "2.0.0",
+  "description": "Muhasebe projesi için Cursor Agent Mode kural haritası",
+  "project": "Muhasebe",
+  "rules": [
+    {
+      "file": "00-PROJECT_IDENTITY.md",
+      "description": "Proje kimliği, kapsam, teknoloji kararları ve değiştirilemez ana kurallar",
+      "priority": "highest"
+    },
+    {
+      "file": "01-AGENT_WORKFLOW.md",
+      "description": "AI agent çalışma akışı, görev sınıflandırması, onay gerektiren işlemler ve raporlama formatı",
+      "priority": "highest"
+    },
+    {
+      "file": "02-CODING_STANDARDS.md",
+      "description": "Genel/backend kodlama standartları, NestJS, Prisma, tenant, soft delete ve transaction kuralları",
+      "priority": "high"
+    },
+    {
+      "file": "02A-CODING_STANDARDS_FRONTEND.md",
+      "description": "Frontend kodlama standartları, Next.js App Router, shadcn/ui, DataGrid, form, service layer ve UI güvenlik sınırları",
+      "priority": "high"
+    },
+    {
+      "file": "03-DESIGN_SYSTEM.md",
+      "description": "Muhasebe projesi görsel tasarım sistemi, tema tokenları, spacing, typography ve UI kalite standardı",
+      "priority": "high"
+    },
+    {
+      "file": "04-UI_COMPONENT_BOUNDARIES.md",
+      "description": "UI kütüphane sınırları: shadcn/ui, MUI X DataGrid, lucide-react ve Tailwind kullanım kararları",
+      "priority": "high"
+    },
+    {
+      "file": "05-DEBUGGING_GUIDE.md",
+      "description": "Frontend, backend, DataGrid, Prisma, tenant, finansal ve build/debug akışları",
+      "priority": "medium"
+    },
+    {
+      "file": "06-MCP_USAGE_GUIDE.md",
+      "description": "Playwright, Context7, shadcn registry, GitHub, Supabase ve Figma MCP kullanım sınırları",
+      "priority": "medium"
+    }
+  ],
+  "workflows": [
+    {
+      "file": "workflows/frontend-page-patterns.md",
+      "description": "Frontend sayfa, form, dashboard, empty/error/loading ve shared component patternleri"
+    },
+    {
+      "file": "workflows/frontend-polish-workflow.md",
+      "description": "Mevcut frontend ekranlarını profesyonel UI/UX seviyesine çıkarma akışı"
+    },
+    {
+      "file": "workflows/datagrid-patterns.md",
+      "description": "MUI X DataGrid, server pagination, filter, sort, overlay, action column ve finansal kolon standartları"
+    },
+    {
+      "file": "workflows/backend-api-patterns.md",
+      "description": "NestJS controller/service/DTO, pagination, filter, tenant, soft delete ve API contract patternleri"
+    }
+  ],
+  "skills": [
+    {
+      "file": "skills/tenant-security-skill.md",
+      "description": "Tenant izolasyonu, tenantId, guards, frontend tenant/auth koruması ve güvenlik checklist’i"
+    },
+    {
+      "file": "skills/prisma-erp-skill.md",
+      "description": "Prisma query, transaction, soft delete, N+1, migration ve ERP veri bütünlüğü kuralları"
+    },
+    {
+      "file": "skills/invoice-engine-skill.md",
+      "description": "Fatura, cari hareket, stok hareketi, tahsilat/ödeme ve finansal transaction kuralları"
+    },
+    {
+      "file": "skills/warehouse-stock-skill.md",
+      "description": "Depo, lokasyon, stok hareketi, transfer, sayım ve stok güvenliği kuralları"
+    }
+  ],
+  "context": [
+    {
+      "file": "context-map/module-context-map.md",
+      "description": "Görev türüne göre okunacak rule, workflow, skill ve proje dosyaları haritası"
+    }
+  ],
+  "decisions": [
+    {
+      "file": "decisions/ADR-001-tenant-isolation.md",
+      "description": "Tenant izolasyonu mimari kararı"
+    },
+    {
+      "file": "decisions/ADR-002-soft-delete.md",
+      "description": "Soft delete mimari kararı"
+    },
+    {
+      "file": "decisions/ADR-003-financial-transactions.md",
+      "description": "Finansal transaction mimari kararı"
+    }
+  ]
+}

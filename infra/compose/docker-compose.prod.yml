@@ -1,0 +1,302 @@
+version: "3.9"
+
+# ── NETWORKS ───────────────────────────────────────────────────────────────────
+# Strict network isolation for security and scalability
+
+networks:
+  frontend-network:
+    name: muhasebe_frontend_net
+    driver: bridge
+    # Public-facing services: caddy, frontend, backend (API access)
+
+  backend-network:
+    name: muhasebe_backend_net
+    driver: bridge
+    # Internal services: backend, pgbouncer, postgres, redis, minio
+    # NO external access
+
+  monitoring-network:
+    name: muhasebe_monitoring_net
+    driver: bridge
+    # Reserved for future Prometheus/Grafana/Loki
+    # Currently: no services attached
+
+# ── VOLUMES ─────────────────────────────────────────────────────────────────────
+# Persistent data storage for all services
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  # MinIO uses bind mount: /opt/muhasebe/minio:/data (see minio service)
+  # named volume removed to persist data even if container is removed
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+  pgbouncer_logs:
+    driver: local
+
+# ── SERVICES ─────────────────────────────────────────────────────────────────────
+# Production services with healthchecks and proper dependencies
+
+services:
+  # ═════════════════════════════════════════════════════════════════
+  # POSTGRESQL - Primary Database
+  # ═════════════════════════════════════════════════════════════════
+  postgres:
+    image: postgres:16-alpine
+    container_name: muhasebe_saas_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-muhasebe_saas_db}
+      TZ: Europe/Istanbul
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    # NO host port exposure - internal only!
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ═════════════════════════════════════════════════════════════════
+  # PGCACHE - Redis Cache
+  # ═════════════════════════════════════════════════════════════════
+  redis:
+    image: redis:7-alpine
+    container_name: muhasebe_saas_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-}
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend-network
+    # NO host port exposure - internal only!
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ═════════════════════════════════════════════════════════════════
+  # MINIO - S3-Compatible Object Storage
+  # ═════════════════════════════════════════════════════════════════
+  minio:
+    image: minio/minio:latest
+    container_name: muhasebe_saas_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001" --address ":9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BROWSER: "off"
+      MINIO_REGION: ${MINIO_REGION:-us-east-1}
+    volumes:
+      # Bind mount to persist data even if container is removed
+      # Run: mkdir -p /opt/muhasebe/minio before first start
+      - /opt/muhasebe/minio:/data
+    networks:
+      - backend-network
+    # NO host port 9000 - internal only!
+    # Optional: expose 9001 for admin console (localhost only)
+    ports:
+      - "127.0.0.1:9001:9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ═════════════════════════════════════════════════════════════════
+  # PGBOUNCER - PostgreSQL Connection Pooler (SESSION MODE)
+  # ═════════════════════════════════════════════════════════════════
+  # MANDATORY: pool_mode = session for Prisma interactive transactions
+  # Architecture: NestJS → PgBouncer → PostgreSQL
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: muhasebe_saas_pgbouncer
+    restart: unless-stopped
+    environment:
+      - DATABASES_HOST=postgres
+      - DATABASES_PORT=5432
+      - DATABASES_USER=${POSTGRES_USER:-postgres}
+      - DATABASES_PASSWORD=${POSTGRES_PASSWORD}
+      - DATABASES_DBNAME=${POSTGRES_DB:-muhasebe_saas_db}
+      - POOL_MODE=session
+      - MAX_CLIENT_CONN=200
+      - DEFAULT_POOL_SIZE=20
+      - ADMIN_USERS=${PGBOUNCER_ADMIN_USERS:-postgres}
+      - AUTH_TYPE=md5
+    volumes:
+      - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+      - pgbouncer_logs:/var/log/pgbouncer
+    networks:
+      - backend-network
+    # NO host port exposure - internal only!
+    # Backend connects via container-to-container networking
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-h", "localhost", "-p", "5432", "-U", "${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ═════════════════════════════════════════════════════════════════
+  # BACKEND - NestJS API
+  # ═════════════════════════════════════════════════════════════════
+  backend:
+    image: ${BACKEND_IMAGE:-compose-backend-staging:latest}
+    container_name: muhasebe_saas_backend
+    build:
+      context: ../../api-stage
+      dockerfile: server/Dockerfile.staging.prod
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # DATABASE_URL points to PgBouncer (with pgbouncer=true)
+      DATABASE_URL: ${DATABASE_URL}
+      # Prisma uses DIRECT_DATABASE_URL for migrations
+      DIRECT_DATABASE_URL: ${DIRECT_DATABASE_URL}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+    networks:
+      - frontend-network
+      - backend-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ═══════════════════════════════════════════════════════════════
+  # FRONTEND - Next.js Panel
+  # ═══════════════════════════════════════════════════════════════
+  frontend:
+    image: ${FRONTEND_IMAGE:-compose-user-panel-staging:latest}
+    container_name: muhasebe_saas_panel
+    build:
+      context: ../../panel-stage/client
+      dockerfile: Dockerfile.staging.prod
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      # API proxy to backend (container-to-container)
+      API_PROXY_TARGET: "http://muhasebe_saas_backend:3000"
+    networks:
+      - frontend-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    depends_on:
+      backend:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ═════════════════════════════════════════════════════════════════
+  # CADDY - Reverse Proxy (SSL Termination)
+  # ═══════════════════════════════════════════════════════════════
+  caddy:
+    image: caddy:2
+    container_name: muhasebe_saas_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - frontend-network
+      - monitoring-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      ACME_AGREE: "true"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"

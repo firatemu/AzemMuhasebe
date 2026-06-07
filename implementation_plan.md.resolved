@@ -1,0 +1,399 @@
+# Tüm Sidebar Sayfaları — AGENTS.md Uyumlu Redesign Planı
+
+> **Kapsam:** `panel-stage/client/src/app/(main)` altındaki tüm sayfalar  
+> **Referans Standart:** `/home/azem/projects/muhasebe/AGENTS.md`  
+> **Referans Bileşen:** `stock/material-list/page.tsx` (en güncel örnek)  
+> **Durum:** Sadece plan — uygulama yapılmadı
+
+---
+
+## 📋 AGENTS.md Kuralları Özeti
+
+| Kural | Madde |
+| :--- | :--- |
+| Renk tokenları zorunlu | Hex/RGB yasak, `var(--primary)` vb. kullan |
+| Responsive | `xs`/`sm` dahil, sabit width/height yasak |
+| Sayfa iskeleti | `StandardPage` veya `PageContainer` wrapper |
+| Kart yüzeyi | `StandardCard` veya `var(--card)` / `var(--border)` tokenları |
+| Listing şablon | Sayfa header + KPI strip + Toolbar + DataGrid |
+| Tablo | Arama, Bugün/Hafta/Ay filtresi, Yenile, Excel, Sort, Pagination 25/50/100, Footer sum, 3-4 KPI |
+| Popup | Minimal header, tek satır başlık + X, token renk, scroll sadece liste bölgesinde |
+| Form kontrol | `form-control-select` / `form-control-textfield` |
+
+---
+
+## 🗂️ Sayfa Bazlı Redesign Planı
+
+---
+
+### 1. 🏠 Dashboard
+**Rota:** `/dashboard`
+
+**Mevcut Sorunlar:**
+- KPI kartlarında hardcoded renkler muhtemel
+- Grafik renkleri token tabanlı olmayabilir
+
+**Yapılacaklar:**
+- Tüm renkleri `var(--chart-1)` ... `var(--chart-5)` ve diğer tokenlara çevir
+- Sayfa header bölümü AGENTS.md §3.1 şablonuna uyarla
+- Responsive düzeni `xs`/`sm` için kontrol et
+- Grafik container'larını `Paper variant="outlined"` ile sar
+
+---
+
+### 2. 👥 Cari Hesaplar
+**Rota:** `/accounts` + `/accounts/[id]` + `/accounts/invoice-closing`
+
+**Mevcut Sorunlar:**
+- `NewCariDialog` ve tüm form sekmeleri tamamlandı ✅
+- Liste sayfası redesign tamamlandı ✅
+- `invoice-closing` sayfası henüz kontrol edilmedi
+
+**Yapılacaklar:**
+- `/accounts/invoice-closing` → AGENTS.md §3.1 tablo şablonuna uy
+- Cari Detay sayfası (`[id]`) — 3-4 KPI kart, Ekstre tablosu, toolbar ekle
+- Tüm butonlar `var(--primary)` / `var(--primary-foreground)` ile
+
+---
+
+### 3. 🏦 Banka Hesapları
+**Rota:** `/bank` + `/bank/[id]` + `/bank/credit-operations`
+
+**Yapılacaklar:**
+- Liste sayfası: Sayfa header → AGENTS.md §3.1 ikon kutusu + başlık
+- 3 KPI kart: Toplam Bakiye, Gelen, Giden
+- Tarih filtresi: Bugün/Hafta/Ay chip'leri
+- Excel indir aksiyonu
+- Pagination: default 25, seçenekler 25/50/100
+- Footer sum: Toplam tutar
+- `bank/[id]` detay: hareket tablosu + KPI
+- `credit-operations`: AGENTS.md listing şablonu
+
+---
+
+### 4. 💱 Banka Transferleri
+**Rota:** `/bank-transfer/gelen` + `/giden` + `/silinen`
+
+**Yapılacaklar:**
+- Her sekmede bağımsız sayfa header
+- 3 KPI: Toplam, Gelen, Giden
+- Tarih filtresi chip'leri
+- Excel indir + Yenile butonu
+- Token tabanlı renk düzeltme (hardcoded kahverengi/vb. kaldır)
+
+---
+
+### 5. 💵 Kasa
+**Rota:** `/cash` + `/cash/[id]`
+
+**Yapılacaklar:**
+- Listing için §3.1 şablon
+- KPI: Toplam Bakiye, Gün içi Giriş, Çıkış
+- Tarih filtresi
+- Excel + Yenile
+- Footer sum (toplam)
+- Detay sayfası: hareket tablosu
+
+---
+
+### 6. 📑 Çek/Senet
+**Rota:** `/checks-promissory-notes` + `/[id]`
+
+**Yapılacaklar:**
+- Tablo başlığı ve header AGENTS.md §3.1
+- KPI: Toplam, Vadesi Geçmiş, Bu Ay Vadeli
+- Tarih/vade filtresi chip'leri
+- Excel + Yenile
+- Pagination 25/50/100
+- Footer: toplam tutar
+
+---
+
+### 7. 💰 Tahsilat
+**Rota:** `/collection` + `/collection/[id]`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Günlük Tahsilat, Geciken, Planlanan
+- Tarih filtresi
+- Excel + Yenile
+- Footer sum
+
+---
+
+### 8. 🚗 Şirket Araçları
+**Rota:** `/company-vehicles` + `/[id]`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam Araç, Aktif, Bakımda
+- Tablo kolonları: flex + minWidth
+- Excel + Yenile
+- Araç detay sayfası: masraf/hareket tablosu
+
+---
+
+### 9. 📥 Veri Aktarımı
+**Rota:** `/data-import/*` (Cari, Malzeme, Satış fiyatı, Satın alma fiyatı)
+
+**Yapılacaklar:**
+- Her alt sayfa için minimal header
+- Upload alanı token renk
+- İlerleme göstergesi (`var(--primary)`)
+- Hata/başarı bildirimlerinde token renk
+
+---
+
+### 10. 📧 E-Fatura
+**Rota:** `/e-invoice/gelen`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Gelen Fatura, Bekleyen, İşlenmiş
+- Tarih filtresi chip'leri
+- Excel + Yenile
+- Pagination 25/50/100
+- Footer sum (toplam tutar)
+
+---
+
+### 11. 💸 Gider
+**Rota:** `/expense` + `/expense/[id]`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam Gider, Bu Ay, Bu Hafta
+- Kategori filtresi
+- Excel + Yenile
+- Footer sum
+
+---
+
+### 12. 👩‍💼 İnsan Kaynakları
+**Rota:** `/hr/personel` + `/hr/advances` + `/hr/salary-management`
+
+**Yapılacaklar:**
+- Her alt sayfa için §3.1 listing şablonu
+- Personel listesi KPI: Aktif, Pasif, Toplam
+- Avans listesi KPI: Toplam Avans, Bekleyen, Onaylanan
+- Maaş yönetimi: KPI + aylık özet
+- Tablo tokenları kontrol
+
+---
+
+### 13. 📦 Stok Sayım
+**Rota:** `/inventory-count/*` (liste, raf-bazlı, ürün-bazlı)
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Sayılan Ürün, Eksik, Fazla
+- Tarih/dönem filtresi
+- Excel + Yenile
+- Pagination
+
+---
+
+### 14. 🧾 Faturalar
+**Rota:** `/invoice/*` (sales, purchase, archive, profitability)
+
+**Yapılacaklar:**
+- §3.1 listing şablonu (en kritik sayfalardan)
+- KPI 4 adet: Toplam, Bu Ay, KDV, Kâr
+- Tarih filtresi chip'leri + tarih aralığı
+- Müşteri/tedarikçi filtresi
+- Excel + Yenile + Excel'e toplu aktar
+- Footer sum: Toplam + KDV + Genel Toplam
+- Pagination 25/50/100
+- Fatura profitability sayfası: token tabanlı grafik renk
+
+---
+
+### 15. 🛒 Siparişler
+**Rota:** `/orders/*` (satiş, satin-alma, genel, hazırlık listesi)
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam, Bekleyen, Hazırlanan, Tamamlanan
+- Tarih + durum filtresi
+- Excel + Yenile
+- Footer sum
+
+---
+
+### 16. 💳 Bordrolar
+**Rota:** `/payroll` + `/payroll/[id]` + `/payroll/yeni`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam Brüt, Kesentiler, Net
+- Dönem filtresi (ay/yıl seçimi)
+- Excel + Yenile
+- Footer sum
+- `yeni` sayfası: §5 popup/form standardı
+
+---
+
+### 17. 🚚 Satınalma İrsaliyesi
+**Rota:** `/purchase-delivery-note/*`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam, Bu Hafta, Bekleyen
+- Tarih + tedarikçi filtresi
+- Excel + Yenile + Pagination
+
+---
+
+### 18. 📋 Teklif Yönetimi
+**Rota:** `/quotes`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam Teklif, Kabul Edilen, Reddedilen
+- Tarih + müşteri filtresi
+- Excel + Yenile
+
+---
+
+### 19. 📊 Raporlar
+**Rota:** `/reporting/*`
+
+**Yapılacaklar:**
+- Her rapor sayfası için §3.1 veya özel sayfa iskeleti
+- Grafik renkleri → `var(--chart-1)` ... `var(--chart-5)`
+- Tarih aralığı filtreleri
+- PDF/Excel indir
+- Token tabanlı renk kontrol
+
+---
+
+### 20. 🚚 Satış İrsaliyesi
+**Rota:** `/sales-delivery-note/*`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam, Bu Hafta, Teslim Edilen
+- Excel + Yenile + Pagination + Footer sum
+
+---
+
+### 21. 🔧 Servis Yönetimi
+**Rota:** `/service`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Açık İş Emirleri, Tamamlanan, Bekleyen
+- Tarih + teknisyen filtresi
+- Excel + Yenile
+
+---
+
+### 22. ⚙️ Ayarlar
+**Rota:** `/settings/*`
+
+**Yapılacaklar:**
+- Sayfa header'ı AGENTS.md §3.1 uyumlu
+- Kart container'ları `Paper` / `StandardCard`
+- Form alanları `form-control-select` / `form-control-textfield`
+- Token renk
+
+---
+
+### 23. 📦 Stok / Malzeme
+**Rota:** `/stock/*`
+
+**Durum:** `material-list` ✅ Tamamlandı (referans bileşen)
+
+**Fiyat Kartları vb.:**
+- Fiyat listesi sayfası redesign tamamlandı ✅
+- Stok hareket sayfaları varsa §3.1 şablonu kontrol
+
+---
+
+### 24. 🚙 Araçlar
+**Rota:** `/vehicles`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam, Aktif, Bakımda
+- Excel + Yenile + Pagination
+
+---
+
+### 25. 🏪 Depo
+**Rota:** `/warehouse`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- KPI: Toplam Kapasite, Kullanılan, Boş
+- Raf harita görünümü varsa token renk kontrol
+
+---
+
+### 26. 🛡️ Yetkilendirme
+**Rota:** `/authorization` + `/authorization/roller`
+
+**Yapılacaklar:**
+- §3.1 listing şablonu
+- Rol tablosu: flex + minWidth
+- Kart container'ları token renk
+
+---
+
+### 27. 📉 Vade Analizi
+**Rota:** `/maturity-analysis`
+
+**Yapılacaklar:**
+- §3.1 listing + KPI şablonu
+- KPI: Vadesi Geçmiş, Bu Ay, Gelecek Ay, Toplam
+- Grafik renkleri token
+- Excel + Yenile
+
+---
+
+### 28. 🏗️ Yönetim Dashboard
+**Rota:** `/management/dashboard`
+
+**Yapılacaklar:**
+- Token tabanlı grafik ve KPI
+- Executive özet kartları `var(--chart-*)` renk
+- Responsive layout
+
+---
+
+## 🎯 Öncelik Sırası
+
+| Öncelik | Sayfa | Sebep |
+| :--- | :--- | :--- |
+| 🔴 P1 | Faturalar (invoice) | En çok kullanılan, eksik özellikleri kritik |
+| 🔴 P1 | Tahsilat (collection) | Finansal kritik |
+| 🔴 P1 | Banka / Kasa | Finansal kritik |
+| 🟡 P2 | Siparişler (orders) | İş akışı kritik |
+| 🟡 P2 | Vade Analizi | Finansal görünürlük |
+| 🟡 P2 | Raporlar | Yönetim kararı |
+| 🟢 P3 | HR (İnsan Kaynakları) | Destek süreç |
+| 🟢 P3 | Servis | Destek süreç |
+| 🟢 P3 | Araçlar / Depo | Operasyonel |
+
+---
+
+## 🧩 Ortak Bileşenler (Tüm Sayfalar İçin)
+
+Aşağıdaki bileşenler tüm sayfalarda yeniden kullanılmak üzere oluşturulmalı veya güncellenmelidir:
+
+| Bileşen | Durum | Notlar |
+| :--- | :--- | :--- |
+| `StandardPage.tsx` | Kontrol gerekiyor | `src/components/common/` |
+| `StandardCard.tsx` | Kontrol gerekiyor | `src/components/common/` |
+| `KpiCard.tsx` | Eğer yoksa oluşturulmalı | Ortak KPI kart bileşeni |
+| `PageHeader.tsx` | Eğer yoksa oluşturulmalı | İkon kutusu + başlık + aksiyon butonları |
+| `DateRangeFilter.tsx` | Eğer yoksa oluşturulmalı | Bugün/Hafta/Ay chip'leri |
+| `ExcelDownloadButton.tsx` | Eğer yoksa oluşturulmalı | Excel indir aksiyonu |
+
+---
+
+> [!IMPORTANT]
+> Bu plan sadece tasarım rehberidir. Uygulama yapılmamıştır. Her sayfanın backend API uyumluluğu ayrıca kontrol edilmelidir.
+
+> [!NOTE]
+> POS (`/pos/**`) bu planın kapsamı dışındadır. AGENTS.md §1 istisnası gereği POS sayfaları kendi ekosistemiyle ilerler.

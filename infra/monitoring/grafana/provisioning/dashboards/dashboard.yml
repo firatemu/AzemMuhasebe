@@ -1,0 +1,159 @@
+# ───────────────────────────────────────────────────────────────────────────────────────
+# Grafana Dashboard Provisioning
+# Oto Muhasebe SaaS Platform
+# ═══════════════════════════════════════════════════════════════
+# Automatically loads dashboards from grafana.com
+# No manual import required after startup
+# ───────────────────────────────────────────────────────────────────────────────────────
+
+apiVersion: 1
+
+providers:
+  # ───────────────────────────────────────────────────────────────────────────
+  # PROVIDER: Grafana.com Community Dashboards
+  # ───────────────────────────────────────────────────────────────────────────
+  # Downloads dashboards from Grafana community library
+  # Updates automatically when Grafana restarts
+  # ───────────────────────────────────────────────────────────────────────────
+  - name: 'Grafana Community Dashboards'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 3600
+    allowUiUpdates: true
+    options:
+      # Path to dashboard JSON files (can be mounted as volume)
+      # Custom dashboards can be placed here
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: true
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # PROVIDER: Grafana.com Online Dashboards (by ID)
+  # ───────────────────────────────────────────────────────────────────────────
+  # Downloads dashboards directly from grafana.com
+  # Specify dashboard ID and revision number
+  # ───────────────────────────────────────────────────────────────────────────
+  - name: 'Grafana.com Dashboards'
+    orgId: 1
+    folder: 'Community'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 3600
+    allowUiUpdates: true
+    options:
+      # Download dashboards from Grafana community
+      # Dashboards are loaded on Grafana startup
+      # Check below for recommended dashboard IDs
+      path: /var/lib/grafana/dashboards/community
+
+# ───────────────────────────────────────────────────────────────────────────────────────
+# RECOMMENDED DASHBOARDS (Manual Import)
+# ───────────────────────────────────────────────────────────────────────────────────────
+#
+# After Grafana starts, import these dashboards from grafana.com:
+#
+# ───────────────────────────────────────────────────────────────────────────
+# 1. NODE EXPORTER FULL - System Metrics Dashboard
+# ───────────────────────────────────────────────────────────────────────────
+# Dashboard ID: 1860
+# URL: https://grafana.com/grafana/dashboards/1860
+# Description: Comprehensive VPS system metrics
+# Metrics included:
+#   - CPU usage (per-core, total, user, system, iowait)
+#   - Memory usage (total, available, used, cached, buffers)
+#   - Disk usage (per filesystem, I/O, inode counts)
+#   - Network traffic (bytes/packets sent/received per interface)
+#   - System load averages (1min, 5min, 15min)
+#   - Filesystem mount points and stats
+#   - Temperature sensors (if available)
+# Import steps:
+#   1. Login to Grafana (https://monitor.muhasebe.com)
+#   2. Click "+" → "Import"
+#   3. Enter "1860" in "Import via grafana.com"
+#   4. Click "Load"
+#   5. Select "Prometheus" as datasource
+#   6. Click "Import"
+#
+# ───────────────────────────────────────────────────────────────────────────
+# 2. POSTGRESQL OVERVIEW - Database Performance Dashboard
+# ───────────────────────────────────────────────────────────────────────────
+# Dashboard ID: 9628
+# URL: https://grafana.com/grafana/dashboards/9628
+# Description: PostgreSQL database performance metrics
+# Metrics included:
+#   - Connection stats (total, active, idle, max connections)
+#   - Query performance (slow queries, query time distribution)
+#   - Transaction stats (commits, rollbacks, deadlocks)
+#   - Lock stats (table locks, row locks, lock waits)
+#   - Cache stats (buffer pool hit ratio, cache effectiveness)
+#   - Database size growth and bloat
+#   - WAL (Write-Ahead Log) stats
+# Import steps:
+#   1. Login to Grafana (https://monitor.muhasebe.com)
+#   2. Click "+" → "Import"
+#   3. Enter "9628" in "Import via grafana.com"
+#   4. Click "Load"
+#   5. Select "Prometheus" as datasource
+#   6. Click "Import"
+#
+# ───────────────────────────────────────────────────────────────────────────
+# 3. REDIS DASHBOARD - Cache Performance Dashboard
+# ───────────────────────────────────────────────────────────────────────────
+# Dashboard ID: 11835
+# URL: https://grafana.com/grafana/dashboards/11835
+# Description: Redis cache performance metrics
+# Metrics included:
+#   - Connected clients (total, blocked, in Pub/Sub)
+#   - Commands per second (total, per command type)
+#   - Memory usage (used, RSS, peak, fragmentation ratio)
+#   - Key eviction stats (evicted keys, maxmemory policy)
+#   - Cache hit ratio (hits, misses, hit percentage)
+#   - Keyspace stats (keys per DB, expires)
+#   - Replication stats (if master-slave or cluster)
+#   - Persistence stats (RDB saves, AOF rewrites)
+#   - Pub/Sub stats (channels, patterns, subscribers)
+# Import steps:
+#   1. Login to Grafana (https://monitor.muhasebe.com)
+#   2. Click "+" → "Import"
+#   3. Enter "11835" in "Import via grafana.com"
+#   4. Click "Load"
+#   5. Select "Prometheus" as datasource
+#   6. Click "Import"
+#
+# ───────────────────────────────────────────────────────────────────────────
+# ALTERNATIVE: Manual Dashboard JSON Import
+# ───────────────────────────────────────────────────────────────────────────
+# If you have custom dashboard JSON files:
+#
+# 1. Create custom dashboard JSON file:
+#    monitoring/grafana/provisioning/dashboards/my-dashboard.json
+#
+# 2. Add to provider config:
+#    providers:
+#      - name: 'My Custom Dashboards'
+#        orgId: 1
+#        folder: 'Custom'
+#        type: file
+#        disableDeletion: false
+#        options:
+#          path: /var/lib/grafana/dashboards/custom
+#
+# 3. Mount custom dashboards directory:
+#    grafana:
+#      volumes:
+#        - ./monitoring/grafana/provisioning/dashboards/custom:/var/lib/grafana/dashboards/custom:ro
+#
+# ───────────────────────────────────────────────────────────────────────────────
+# NOTES
+# ───────────────────────────────────────────────────────────────────────────────
+#
+# 1. Dashboard provisioning runs on Grafana startup
+# 2. Dashboards are saved in grafana_data volume (persistent)
+# 3. Updates are applied every updateIntervalSeconds (3600s = 1 hour)
+# 4. Custom dashboards can be edited via Grafana UI
+# 5. Deleted dashboards are not recovered (disableDeletion: false)
+# 6. Allow UI updates: true (users can modify dashboards)
+# 7. All dashboards query "Prometheus" datasource
+#
+# ───────────────────────────────────────────────────────────────────────────────

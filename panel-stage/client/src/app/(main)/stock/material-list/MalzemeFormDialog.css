@@ -1,0 +1,295 @@
+/* Malzeme Form Dialog - Design System ile Modern Tasarım */
+/* Uses central CSS variables from globals.css (:root / .dark) */
+
+/* Dialog Container */
+.MuiDialog-paper {
+  border-radius: var(--radius, 0.5rem) !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow-lg, 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10)) !important;
+  background-color: var(--card, rgb(128 128 128)) !important;
+  color: var(--card-foreground, rgb(128 128 128)) !important;
+}
+
+/* Dialog Header - Primary Color */
+.MuiDialogTitle-root.malzeme-dialog-header,
+.malzeme-dialog-header {
+  background-color: var(--primary, rgb(128 128 128)) !important;
+  color: var(--primary-foreground, rgb(128 128 128)) !important;
+  padding: 24px 32px !important;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: var(--shadow-md, 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10)) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  font-family: var(--font-sans, 'DM Sans', sans-serif) !important;
+  border-bottom: none !important;
+}
+
+/* Dialog Content */
+.MuiDialogContent-root.malzeme-dialog-content,
+.malzeme-dialog-content {
+  padding: 24px 32px !important;
+  background-color: var(--card, rgb(128 128 128)) !important;
+  margin-top: 0 !important;
+  color: var(--card-foreground, rgb(128 128 128)) !important;
+}
+
+/* Dialog Actions */
+.MuiDialogActions-root.malzeme-dialog-actions,
+.malzeme-dialog-actions {
+  padding: 16px 32px !important;
+  background-color: var(--card, rgb(128 128 128)) !important;
+  border-top: 1px solid var(--border, rgb(128 128 128)) !important;
+  gap: 12px !important;
+  justify-content: flex-end !important;
+}
+
+/* Section Container - Card Style */
+.malzeme-section-container {
+  background-color: var(--card, rgb(128 128 128)) !important;
+  color: var(--card-foreground, rgb(128 128 128)) !important;
+  border-radius: var(--radius, 0.5rem) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+  box-shadow: var(--shadow-sm, 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10)) !important;
+  border: 1px solid var(--border, rgb(128 128 128)) !important;
+  transition: all 0.3s ease !important;
+}
+
+.malzeme-section-container:hover {
+  box-shadow: var(--shadow-md, 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10)) !important;
+  border-color: var(--accent, rgb(128 128 128)) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Section Title */
+.malzeme-section-title {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: var(--foreground, rgb(128 128 128)) !important;
+  margin-bottom: 20px !important;
+  padding-bottom: 12px !important;
+  border-bottom: 2px solid var(--border, rgb(128 128 128)) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  position: relative !important;
+  font-family: var(--font-sans, 'DM Sans', sans-serif) !important;
+}
+
+.malzeme-section-title::before {
+  content: '' !important;
+  width: 4px !important;
+  height: 24px !important;
+  background-color: var(--primary, rgb(128 128 128)) !important;
+  border-radius: 2px !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+/* TextField Styling */
+.malzeme-dialog-content .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: var(--radius, 0.5rem) !important;
+  transition: all 0.3s ease !important;
+  background-color: var(--input, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiTextField-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiTextField-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--ring, rgb(16 185 129)) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+.malzeme-dialog-content .MuiTextField-root .MuiInputBase-input {
+  padding: 12px 16px !important;
+  color: var(--foreground, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiTextField-root .MuiInputLabel-root {
+  color: var(--muted-foreground, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiTextField-root .MuiFormHelperText-root {
+  color: var(--muted-foreground, rgb(128 128 128)) !important;
+}
+
+/* Select Styling */
+.malzeme-dialog-content .MuiFormControl-root .MuiOutlinedInput-root {
+  border-radius: var(--radius, 0.5rem) !important;
+  transition: all 0.3s ease !important;
+  background-color: var(--input, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiFormControl-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiFormControl-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--ring, rgb(16 185 129)) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+.malzeme-dialog-content .MuiFormControl-root .MuiInputBase-input {
+  padding: 12px 16px !important;
+  color: var(--foreground, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiFormControl-root .MuiInputLabel-root {
+  color: var(--muted-foreground, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiFormControl-root .MuiFormHelperText-root {
+  color: var(--muted-foreground, rgb(128 128 128)) !important;
+}
+
+/* Autocomplete Styling */
+.malzeme-dialog-content .MuiAutocomplete-root .MuiOutlinedInput-root {
+  border-radius: var(--radius, 0.5rem) !important;
+  background-color: var(--input, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiAutocomplete-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border, rgb(128 128 128)) !important;
+}
+
+.malzeme-dialog-content .MuiAutocomplete-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--ring, rgb(16 185 129)) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Price Section */
+.malzeme-price-section {
+  background-color: var(--muted, rgb(128 128 128)) !important;
+  border-radius: var(--radius, 0.5rem) !important;
+  padding: 20px !important;
+  margin-top: 16px !important;
+  border: 1px solid var(--border, rgb(128 128 128)) !important;
+  color: var(--foreground, rgb(128 128 128)) !important;
+}
+
+/* Dialog Actions */
+.MuiDialogActions-root.malzeme-dialog-actions {
+  padding: 20px 32px !important;
+  background-color: var(--muted, rgb(128 128 128)) !important;
+  border-top: 1px solid var(--border, rgb(128 128 128)) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+/* Cancel Button */
+.malzeme-btn-cancel {
+  padding: 12px 24px !important;
+  border: 2px solid var(--border, rgb(128 128 128)) !important;
+  border-radius: var(--radius, 0.5rem) !important;
+  background-color: var(--card, rgb(128 128 128)) !important;
+  color: var(--foreground, rgb(128 128 128)) !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  transition: all 0.3s ease !important;
+  font-family: var(--font-sans, 'DM Sans', sans-serif) !important;
+}
+
+.malzeme-btn-cancel:hover {
+  background-color: var(--secondary, rgb(128 128 128)) !important;
+  border-color: var(--accent, rgb(128 128 128)) !important;
+  color: var(--secondary-foreground, rgb(128 128 128)) !important;
+}
+
+/* Submit Button */
+.malzeme-btn-submit {
+  padding: 12px 32px !important;
+  border: none !important;
+  border-radius: var(--radius, 0.5rem) !important;
+  background-color: var(--primary, rgb(128 128 128)) !important;
+  color: var(--primary-foreground, rgb(128 128 128)) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: var(--shadow-md, 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10)) !important;
+  transition: all 0.3s ease !important;
+  font-family: var(--font-sans, 'DM Sans', sans-serif) !important;
+}
+
+.malzeme-btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-lg, 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10)) !important;
+  filter: brightness(0.9) !important;
+}
+
+.malzeme-btn-submit:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  background-color: var(--muted, rgb(128 128 128)) !important;
+  color: var(--muted-foreground, rgb(128 128 128)) !important;
+}
+
+/* Scrollbar */
+.malzeme-dialog-content::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.malzeme-dialog-content::-webkit-scrollbar-track {
+  background-color: var(--muted, rgb(128 128 128)) !important;
+  border-radius: 4px !important;
+}
+
+.malzeme-dialog-content::-webkit-scrollbar-thumb {
+  background-color: var(--primary, rgb(128 128 128)) !important;
+  border-radius: 4px !important;
+}
+
+.malzeme-dialog-content::-webkit-scrollbar-thumb:hover {
+  filter: brightness(0.8) !important;
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.malzeme-section-container {
+  animation: slideIn 0.3s ease-out !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .MuiDialogTitle-root.malzeme-dialog-header {
+    padding: 20px 24px !important;
+    font-size: 1.25rem !important;
+  }
+
+  .MuiDialogContent-root.malzeme-dialog-content {
+    padding: 20px !important;
+  }
+
+  .malzeme-section-container {
+    padding: 16px !important;
+  }
+
+  .MuiDialogActions-root.malzeme-dialog-actions {
+    padding: 16px 20px !important;
+    flex-direction: column !important;
+  }
+
+  .malzeme-btn-cancel,
+  .malzeme-btn-submit {
+    width: 100% !important;
+  }
+}
